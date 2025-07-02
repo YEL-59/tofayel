@@ -1,0 +1,36 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "dependabot/npm_and_yarn/babel/runtime-7.27.6",
+    "dependabot/npm_and_yarn/glob-10.5.0",
+    "dependabot/npm_and_yarn/js-yaml-4.1.1",
+    "dependabot/npm_and_yarn/lodash-4.17.23",
+    "dependabot/npm_and_yarn/multi-53fc0aa15d",
+    "dependabot/npm_and_yarn/multi-d3748e614d",
+    "dependabot/npm_and_yarn/vite-5.4.21",
+    "main",
+    "origin"
+  ],
+  "parent": {
+    "dependabot/npm_and_yarn/babel/runtime-7.27.6": "main",
+    "dependabot/npm_and_yarn/glob-10.5.0": "main",
+    "dependabot/npm_and_yarn/js-yaml-4.1.1": "main",
+    "dependabot/npm_and_yarn/lodash-4.17.23": "main",
+    "dependabot/npm_and_yarn/multi-53fc0aa15d": "main",
+    "dependabot/npm_and_yarn/multi-d3748e614d": "main",
+    "dependabot/npm_and_yarn/vite-5.4.21": "main",
+    "main": null,
+    "origin": "main"
+  },
+  "order": [
+    "main",
+    "dependabot/npm_and_yarn/babel/runtime-7.27.6",
+    "dependabot/npm_and_yarn/glob-10.5.0",
+    "dependabot/npm_and_yarn/js-yaml-4.1.1",
+    "dependabot/npm_and_yarn/lodash-4.17.23",
+    "dependabot/npm_and_yarn/multi-53fc0aa15d",
+    "dependabot/npm_and_yarn/multi-d3748e614d",
+    "dependabot/npm_and_yarn/vite-5.4.21",
+    "origin"
+  ]
+}
