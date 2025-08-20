@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, Moon, Sun, Code, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { Menu, X, Moon, Sun, Code, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -14,8 +14,15 @@ export default function Header() {
       const scrollPosition = window.scrollY;
       setScrolled(scrollPosition > 50);
 
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
-      const currentSection = sections.find(section => {
+      const sections = [
+        "home",
+        "about",
+        "skills",
+        "projects",
+        "experience",
+        "contact",
+      ];
+      const currentSection = sections.find((section) => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -28,30 +35,30 @@ export default function Header() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle("dark");
   };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
     setIsMenuOpen(false);
   };
 
   const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'contact', label: 'Contact' },
+    { id: "home", label: "Home" },
+    { id: "about", label: "About" },
+    { id: "skills", label: "Skills" },
+    { id: "projects", label: "Projects" },
+    { id: "experience", label: "Experience" },
+    { id: "contact", label: "Contact" },
   ];
 
   const headerVariants = {
@@ -61,9 +68,9 @@ export default function Header() {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   const menuVariants = {
@@ -72,17 +79,17 @@ export default function Header() {
       height: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut"
-      }
+        ease: "easeInOut",
+      },
     },
     visible: {
       opacity: 1,
       height: "auto",
       transition: {
         duration: 0.3,
-        ease: "easeInOut"
-      }
-    }
+        ease: "easeInOut",
+      },
+    },
   };
 
   const itemVariants = {
@@ -92,17 +99,17 @@ export default function Header() {
       opacity: 1,
       transition: {
         duration: 0.3,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 shadow-lg' 
-          : 'bg-transparent'
+        scrolled
+          ? "bg-white/95 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 shadow-lg"
+          : "bg-transparent"
       }`}
       variants={headerVariants}
       initial="hidden"
@@ -115,14 +122,14 @@ export default function Header() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <motion.h1 
+            <motion.h1
               className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 cursor-pointer"
-              onClick={() => scrollToSection('home')}
+              onClick={() => scrollToSection("home")}
               whileHover={{
                 background: "linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899)",
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text",
-                color: "transparent"
+                color: "transparent",
               }}
             >
               <motion.div
@@ -135,12 +142,12 @@ export default function Header() {
                   className="absolute -top-1 -right-1"
                   animate={{
                     scale: [0, 1, 0],
-                    rotate: [0, 180, 360]
+                    rotate: [0, 180, 360],
                   }}
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    delay: 0.5
+                    delay: 0.5,
                   }}
                 >
                   <Sparkles className="h-3 w-3 text-yellow-500" />
@@ -157,14 +164,14 @@ export default function Header() {
                 <motion.button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`px-3 lg:px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg relative ${
+                  className={`px-3 lg:px-4 py-2 bg-white text-sm font-medium transition-all duration-300 rounded-lg relative ${
                     activeSection === item.id
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   }`}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.05,
-                    y: -2
+                    y: -2,
                   }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: -20 }}
@@ -192,15 +199,12 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative overflow-hidden group"
+                className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 relative overflow-hidden group"
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-blue-400/20"
@@ -217,11 +221,11 @@ export default function Header() {
                     <motion.div
                       animate={{
                         scale: [1, 1.2, 1],
-                        rotate: [0, 180, 360]
+                        rotate: [0, 180, 360],
                       }}
                       transition={{
                         duration: 2,
-                        repeat: Infinity
+                        repeat: Infinity,
                       }}
                     >
                       <Sun className="h-5 w-5" />
@@ -229,11 +233,11 @@ export default function Header() {
                   ) : (
                     <motion.div
                       animate={{
-                        scale: [1, 1.1, 1]
+                        scale: [1, 1.1, 1],
                       }}
                       transition={{
                         duration: 2,
-                        repeat: Infinity
+                        repeat: Infinity,
                       }}
                     >
                       <Moon className="h-5 w-5" />
@@ -276,11 +280,11 @@ export default function Header() {
                   ) : (
                     <motion.div
                       animate={{
-                        scale: [1, 1.1, 1]
+                        scale: [1, 1.1, 1],
                       }}
                       transition={{
                         duration: 2,
-                        repeat: Infinity
+                        repeat: Infinity,
                       }}
                     >
                       <Menu className="h-5 w-5" />
@@ -309,8 +313,8 @@ export default function Header() {
                     onClick={() => scrollToSection(item.id)}
                     className={`block w-full text-left px-3 py-3 text-base font-medium transition-all duration-300 rounded-lg relative overflow-hidden group ${
                       activeSection === item.id
-                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     }`}
                     variants={itemVariants}
                     initial="hidden"

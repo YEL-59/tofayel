@@ -84,7 +84,7 @@ export default function Hero() {
     },
   };
 
-  const name = "Sarah Johnson";
+  const name = "Md.Tofayel Islam";
 
   return (
     <section
