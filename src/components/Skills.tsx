@@ -1,47 +1,82 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Code, Palette, Database, Wrench, Zap, Star, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Code,
+  Palette,
+  Database,
+  Wrench,
+  Zap,
+  Star,
+  Sparkles,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Skills() {
   const skillCategories = [
     {
-      title: 'Frontend Technologies',
+      title: "Frontend Technologies",
       icon: Code,
-      description: 'Modern frontend frameworks and libraries',
-      skills: ['React', 'TypeScript', 'Next.js', 'Vue.js', 'Angular', 'JavaScript (ES6+)'],
-      color: 'from-blue-500 to-blue-600'
+      description: "Modern frontend frameworks and libraries",
+      skills: [
+        "React",
+        "TypeScript",
+        "Next.js",
+        "Vue.js",
+        "Angular",
+        "JavaScript (ES6+)",
+      ],
+      color: "from-blue-500 to-blue-600",
     },
     {
-      title: 'Styling & Design',
+      title: "Styling & Design",
       icon: Palette,
-      description: 'CSS frameworks and design tools',
-      skills: ['Tailwind CSS', 'Styled Components', 'SASS/SCSS', 'CSS Grid', 'Flexbox', 'Figma'],
-      color: 'from-purple-500 to-purple-600'
+      description: "CSS frameworks and design tools",
+      skills: [
+        "Tailwind CSS",
+        "Styled Components",
+        "SASS/SCSS",
+        "CSS Grid",
+        "Flexbox",
+        "Figma",
+      ],
+      color: "from-purple-500 to-purple-600",
     },
     {
-      title: 'Backend & Database',
+      title: "Backend & Database",
       icon: Database,
-      description: 'Server-side technologies and databases',
-      skills: ['Node.js', 'Express.js', 'PostgreSQL', 'MongoDB', 'Supabase', 'REST APIs'],
-      color: 'from-emerald-500 to-emerald-600'
+      description: "Server-side technologies and databases",
+      skills: [
+        "Node.js",
+        "Express.js",
+        "PostgreSQL",
+        "MongoDB",
+        "Supabase",
+        "REST APIs",
+      ],
+      color: "from-emerald-500 to-emerald-600",
     },
     {
-      title: 'Tools & Workflow',
+      title: "Tools & Workflow",
       icon: Wrench,
-      description: 'Development tools and methodologies',
-      skills: ['Git', 'Webpack', 'Vite', 'Docker', 'Jest', 'Cypress'],
-      color: 'from-orange-500 to-orange-600'
-    }
+      description: "Development tools and methodologies",
+      skills: ["Git", "Webpack", "Vite", "Docker", "Jest", "Cypress"],
+      color: "from-orange-500 to-orange-600",
+    },
   ];
 
   const proficiencyLevels = [
-    { skill: 'React', level: 95, color: 'from-blue-500 to-blue-600' },
-    { skill: 'TypeScript', level: 90, color: 'from-indigo-500 to-indigo-600' },
-    { skill: 'Tailwind CSS', level: 95, color: 'from-cyan-500 to-cyan-600' },
-    { skill: 'Next.js', level: 85, color: 'from-gray-700 to-gray-800' },
-    { skill: 'Node.js', level: 80, color: 'from-green-500 to-green-600' },
-    { skill: 'PostgreSQL', level: 75, color: 'from-blue-600 to-blue-700' }
+    { skill: "React", level: 95, color: "from-blue-500 to-blue-600" },
+    { skill: "TypeScript", level: 90, color: "from-indigo-500 to-indigo-600" },
+    { skill: "Tailwind CSS", level: 95, color: "from-cyan-500 to-cyan-600" },
+    { skill: "Next.js", level: 85, color: "from-gray-700 to-gray-800" },
+    { skill: "Node.js", level: 80, color: "from-green-500 to-green-600" },
+    { skill: "PostgreSQL", level: 75, color: "from-blue-600 to-blue-700" },
   ];
 
   const containerVariants = {
@@ -50,9 +85,9 @@ export default function Skills() {
       opacity: 1,
       transition: {
         delayChildren: 0.3,
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -62,9 +97,9 @@ export default function Skills() {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   const cardVariants = {
@@ -74,21 +109,24 @@ export default function Skills() {
       opacity: 1,
       transition: {
         duration: 0.5,
-        ease: "easeOut"
-      }
+        ease: "easeOut",
+      },
     },
     hover: {
       scale: 1.02,
       y: -8,
       transition: {
         duration: 0.3,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   return (
-    <section id="skills" className="py-16 sm:py-20 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
+    <section
+      id="skills"
+      className="py-16 sm:py-20 bg-gray-50 dark:bg-gray-800 relative overflow-hidden"
+    >
       {/* Animated background elements */}
       <motion.div
         className="absolute inset-0 overflow-hidden"
@@ -127,7 +165,7 @@ export default function Skills() {
             viewport={{ once: true, amount: 0.3 }}
             variants={containerVariants}
           >
-            <motion.h2 
+            <motion.h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4"
               variants={itemVariants}
               whileHover={{
@@ -135,12 +173,12 @@ export default function Skills() {
                 background: "linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899)",
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text",
-                color: "transparent"
+                color: "transparent",
               }}
             >
               Skills & Technologies
             </motion.h2>
-            <motion.p 
+            <motion.p
               className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
               variants={itemVariants}
             >
@@ -165,7 +203,7 @@ export default function Skills() {
                   <motion.div
                     className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
                   />
-                  
+
                   {/* Animated particles inside card */}
                   <motion.div className="absolute inset-0 overflow-hidden">
                     {[...Array(5)].map((_, i) => (
@@ -194,15 +232,15 @@ export default function Skills() {
                       className={`bg-gradient-to-br ${category.color} w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-lg relative`}
                       whileHover={{
                         rotate: [0, -10, 10, 0],
-                        scale: 1.1
+                        scale: 1.1,
                       }}
                       transition={{ duration: 0.3 }}
                       animate={{
                         boxShadow: [
                           "0 4px 20px rgba(59, 130, 246, 0.3)",
                           "0 8px 30px rgba(139, 92, 246, 0.4)",
-                          "0 4px 20px rgba(59, 130, 246, 0.3)"
-                        ]
+                          "0 4px 20px rgba(59, 130, 246, 0.3)",
+                        ],
                       }}
                     >
                       <category.icon className="h-6 w-6 text-white" />
@@ -210,19 +248,23 @@ export default function Skills() {
                         className="absolute -top-1 -right-1"
                         animate={{
                           scale: [0, 1, 0],
-                          rotate: [0, 180, 360]
+                          rotate: [0, 180, 360],
                         }}
                         transition={{
                           duration: 3,
                           repeat: Infinity,
-                          delay: index * 0.5
+                          delay: index * 0.5,
                         }}
                       >
                         <Sparkles className="h-3 w-3 text-yellow-400" />
                       </motion.div>
                     </motion.div>
-                    <CardTitle className="text-lg sm:text-xl">{category.title}</CardTitle>
-                    <CardDescription className="text-sm">{category.description}</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl">
+                      {category.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm">
+                      {category.description}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="relative z-10">
                     <div className="flex flex-wrap gap-2">
@@ -231,19 +273,19 @@ export default function Skills() {
                           key={skillIndex}
                           initial={{ scale: 0, opacity: 0 }}
                           whileInView={{ scale: 1, opacity: 1 }}
-                          transition={{ 
+                          transition={{
                             delay: skillIndex * 0.1,
                             type: "spring",
-                            stiffness: 200
+                            stiffness: 200,
                           }}
-                          whileHover={{ 
+                          whileHover={{
                             scale: 1.05,
                             y: -2,
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                           }}
                         >
-                          <Badge 
-                            variant="secondary" 
+                          <Badge
+                            variant="secondary"
                             className="text-xs hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-default relative overflow-hidden"
                           >
                             <motion.div
@@ -277,25 +319,25 @@ export default function Skills() {
                 background: [
                   "linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05))",
                   "linear-gradient(45deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.05))",
-                  "linear-gradient(45deg, rgba(236, 72, 153, 0.05), rgba(59, 130, 246, 0.05))"
-                ]
+                  "linear-gradient(45deg, rgba(236, 72, 153, 0.05), rgba(59, 130, 246, 0.05))",
+                ],
               }}
               transition={{ duration: 8, repeat: Infinity }}
             />
 
-            <motion.h3 
+            <motion.h3
               className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center flex items-center justify-center gap-3 relative z-10"
               variants={itemVariants}
             >
               <motion.div
                 animate={{
                   rotate: [0, 360],
-                  scale: [1, 1.2, 1]
+                  scale: [1, 1.2, 1],
                 }}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               >
                 <Zap className="h-8 w-8 text-yellow-500" />
@@ -304,13 +346,13 @@ export default function Skills() {
               <motion.div
                 animate={{
                   scale: [1, 1.3, 1],
-                  rotate: [0, 180, 360]
+                  rotate: [0, 180, 360],
                 }}
                 transition={{
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 1
+                  delay: 1,
                 }}
               >
                 <Star className="h-6 w-6 text-purple-500" />
@@ -318,8 +360,8 @@ export default function Skills() {
             </motion.h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 relative z-10">
               {proficiencyLevels.map((item, index) => (
-                <motion.div 
-                  key={index} 
+                <motion.div
+                  key={index}
                   className="space-y-3"
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -331,20 +373,20 @@ export default function Skills() {
                     <span className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
                       {item.skill}
                     </span>
-                    <motion.span 
+                    <motion.span
                       className="text-sm text-gray-600 dark:text-gray-400 font-semibold"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 + 0.3 }}
+                      // transition={{ delay: index * 0.1 + 0.3 }}
                       animate={{
-                        scale: [1, 1.1, 1]
+                        scale: [1, 1.1, 1],
                       }}
                       transition={{
                         scale: {
                           duration: 2,
                           repeat: Infinity,
-                          delay: index * 0.3
-                        }
+                          delay: index * 0.3,
+                        },
                       }}
                     >
                       {item.level}%
@@ -355,35 +397,35 @@ export default function Skills() {
                       className={`bg-gradient-to-r ${item.color} h-3 rounded-full relative overflow-hidden`}
                       initial={{ width: 0 }}
                       whileInView={{ width: `${item.level}%` }}
-                      transition={{ 
-                        duration: 1.5, 
+                      transition={{
+                        duration: 1.5,
                         delay: index * 0.1,
-                        ease: "easeOut"
+                        ease: "easeOut",
                       }}
                       viewport={{ once: true }}
                     >
                       <motion.div
                         className="absolute inset-0 bg-white/30"
                         animate={{
-                          x: ["-100%", "100%"]
+                          x: ["-100%", "100%"],
                         }}
                         transition={{
                           duration: 2,
                           repeat: Infinity,
                           ease: "easeInOut",
-                          delay: index * 0.2
+                          delay: index * 0.2,
                         }}
                       />
                       <motion.div
                         className="absolute right-2 top-1/2 transform -translate-y-1/2"
                         animate={{
                           scale: [0, 1, 0],
-                          rotate: [0, 360, 720]
+                          rotate: [0, 360, 720],
                         }}
                         transition={{
                           duration: 3,
                           repeat: Infinity,
-                          delay: index * 0.4
+                          delay: index * 0.4,
                         }}
                       >
                         <Star className="h-2 w-2 text-white" />
