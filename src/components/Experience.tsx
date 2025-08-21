@@ -184,7 +184,7 @@ export default function Experience() {
                     variants={cardVariants}
                     whileHover="hover"
                   >
-                    <Card className="hover:shadow-xl transition-all duration-500 border-0 bg-white dark:bg-gray-900 relative overflow-hidden">
+                    <Card className="hover:shadow-xl transition-all duration-500 border-0 bg-white/90 dark:bg-gray-900/80 backdrop-blur-xl relative overflow-hidden">
                       <motion.div
                         className={`absolute left-0 top-0 bottom-0 w-1 ${
                           exp.type === "current"

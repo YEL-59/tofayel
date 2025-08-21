@@ -94,13 +94,13 @@ export default function Footer() {
                 className="text-xl sm:text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
                 whileHover={{ scale: 1.05 }}
               >
-                Sarah Johnson
+                Md. Tofayel Islam
               </motion.h3>
               <motion.p 
                 className="text-gray-400 mb-4 text-sm sm:text-base leading-relaxed"
                 variants={itemVariants}
               >
-                Frontend Developer passionate about creating beautiful and functional web experiences.
+                Frontend Developer crafting futuristic, high-performance user interfaces.
               </motion.p>
               <motion.p 
                 className="text-gray-400 text-sm sm:text-base"
@@ -188,7 +188,7 @@ export default function Footer() {
                 className="text-gray-400 text-sm text-center sm:text-left"
                 variants={itemVariants}
               >
-                © {currentYear} Sarah Johnson. All rights reserved.
+                © {currentYear} Md. Tofayel Islam. All rights reserved.
               </motion.p>
               
               <motion.div 

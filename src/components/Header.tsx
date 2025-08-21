@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Moon, Sun, Code, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progressX = useSpring(scrollYProgress, { stiffness: 120, damping: 20, restDelta: 0.001 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,13 +110,18 @@ export default function Header() {
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 shadow-lg"
+          ? "bg-white/70 dark:bg-gray-900/60 backdrop-blur-2xl border-b border-white/10 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
           : "bg-transparent"
       }`}
       variants={headerVariants}
       initial="hidden"
       animate="visible"
     >
+      {/* Scroll progress */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-[2px] origin-left bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
+        style={{ scaleX: progressX }}
+      />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <motion.div
@@ -159,42 +166,43 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:block">
-            <div className="flex items-center space-x-1 lg:space-x-2">
-              {navItems.map((item, index) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`px-3 lg:px-4 py-2 bg-white text-sm font-medium transition-all duration-300 rounded-lg relative ${
-                    activeSection === item.id
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-                  }`}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -2,
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {item.label}
-                  {activeSection === item.id && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
-                      layoutId="activeTab"
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  <motion.div
-                    className="absolute inset-0 bg-blue-50 dark:bg-blue-900/20 rounded-lg opacity-0"
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  />
-                </motion.button>
-              ))}
+            <div className="flex items-center space-x-3">
+              <div className="relative flex items-center bg-white/50 dark:bg-gray-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full p-1 shadow-sm">
+                {navItems.map((item, index) => (
+                  <motion.button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`relative px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                      activeSection === item.id
+                        ? "text-blue-700 dark:text-blue-300"
+                        : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    }`}
+                    whileHover={{
+                      scale: 1.03,
+                      y: -1,
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    initial={{ opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.06 }}
+                  >
+                    {activeSection === item.id && (
+                      <motion.div
+                        layoutId="activeNav"
+                        className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600/15 to-purple-600/15 border border-white/20 dark:border-white/10 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10">{item.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+              <Button
+                onClick={() => scrollToSection("contact")}
+                className="hidden lg:inline-flex bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full px-5 py-2 shadow-md hover:shadow-lg transition-all"
+              >
+                Hire me
+              </Button>
             </div>
           </nav>
 

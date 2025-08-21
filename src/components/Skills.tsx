@@ -199,7 +199,7 @@ export default function Skills() {
                 variants={cardVariants}
                 whileHover="hover"
               >
-                <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white dark:bg-gray-900 relative overflow-hidden group">
+                <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white/90 dark:bg-gray-900/80 backdrop-blur-xl relative overflow-hidden group">
                   <motion.div
                     className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
                   />

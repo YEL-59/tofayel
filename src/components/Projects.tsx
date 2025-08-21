@@ -306,7 +306,7 @@ export default function Projects() {
                   layout
                 >
                   <Card
-                    className={`group hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 bg-white dark:bg-gray-800 relative ${
+                    className={`group hover:shadow-2xl transition-all duration-500 overflow-hidden border-0 bg-white/90 dark:bg-gray-800/80 backdrop-blur-xl relative ${
                       project.featured
                         ? "ring-2 ring-blue-500/20 shadow-lg"
                         : ""
@@ -322,8 +322,8 @@ export default function Projects() {
                       <motion.img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-48 sm:h-56 object-cover"
-                        whileHover={{ scale: 1.1 }}
+                        className="w-full h-48 sm:h-56 object-cover will-change-transform"
+                        whileHover={{ scale: 1.08, rotate: 0.2 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                       />
                       <motion.div

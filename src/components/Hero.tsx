@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import myImage from "../assets/me.jpg";
 
 export default function Hero() {
   const scrollToContact = () => {
@@ -403,7 +404,7 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Floating avatar */}
+          {/* Floating avatar with actual photo */}
           <motion.div
             className="mt-16 flex justify-center"
             variants={itemVariants}
@@ -445,26 +446,11 @@ export default function Hero() {
                 }}
               >
                 <div className="w-full h-full bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center relative overflow-hidden">
+                  <img src={myImage} alt="Tofayel" className="w-full h-full object-cover rounded-full" />
                   <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{
-                      duration: 20,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                  >
-                    <Sparkles className="h-16 w-16 sm:h-20 sm:w-20 text-gray-400 dark:text-gray-600" />
-                  </motion.div>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-500/20"
-                    animate={{
-                      rotate: -360,
-                    }}
-                    transition={{
-                      duration: 15,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-500/10"
+                    animate={{ opacity: [0.4, 0.8, 0.4] }}
+                    transition={{ duration: 4, repeat: Infinity }}
                   />
                 </div>
               </motion.div>

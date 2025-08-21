@@ -270,7 +270,7 @@ export default function Contact() {
             </motion.div>
 
             <motion.div variants={cardVariants} whileHover="hover">
-              <Card className="hover:shadow-2xl transition-all duration-500 border-0 bg-white dark:bg-gray-800 relative overflow-hidden">
+              <Card className="hover:shadow-2xl transition-all duration-500 border-0 bg-white/90 dark:bg-gray-800/80 backdrop-blur-xl relative overflow-hidden">
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"
                   animate={{

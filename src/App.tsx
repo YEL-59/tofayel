@@ -11,7 +11,8 @@ import './App.css';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-background text-foreground app-bg">
+      <div className="bg-mesh bg-grid bg-noise" />
       <Header />
       <main>
         <Hero />
