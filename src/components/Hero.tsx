@@ -330,78 +330,66 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2, duration: 0.8 }}
           >
-            <motion.div
-              className="flex justify-center space-x-8 px-4"
-              variants={containerVariants}
-            >
-              {[
-                {
-                  icon: Github,
-                  href: "https://github.com",
-                  label: "GitHub",
-                  color: "hover:text-gray-900",
-                },
-                {
-                  icon: Linkedin,
-                  href: "https://linkedin.com",
-                  label: "LinkedIn",
-                  color: "hover:text-blue-600",
-                },
-                {
-                  icon: Mail,
-                  href: "mailto:sarah@example.com",
-                  label: "Email",
-                  color: "hover:text-red-500",
-                },
-              ].map((social, index) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  className={`text-gray-600 dark:text-gray-400 ${social.color} dark:hover:text-blue-400 transition-colors duration-300 p-3 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 relative`}
-                  aria-label={social.label}
-                  variants={itemVariants}
-                  whileHover={{
-                    scale: 1.3,
-                    rotate: [0, -10, 10, 0],
-                    transition: { duration: 0.3 },
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    y: {
-                      duration: 2 + index * 0.2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: index * 0.3,
-                    },
-                  }}
-                >
-                  <motion.div
-                    animate={{
-                      rotate: [0, 360],
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      ease: "linear",
-                      delay: index * 1,
-                    }}
+            <div className="px-4">
+              <div className="mx-auto max-w-2xl rounded-2xl border border-gray-200/60 dark:border-white/10 bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl shadow-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-200/60 dark:divide-white/10">
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-3 p-4 sm:p-5 hover:bg-gray-50/70 dark:hover:bg-gray-800/60 transition-colors"
+                    aria-label="GitHub"
                   >
-                    <social.icon className="h-6 w-6 sm:h-7 sm:w-7" />
-                  </motion.div>
-                  <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-transparent"
-                    whileHover={{
-                      borderColor: "#3b82f6",
-                      scale: 1.2,
-                    }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.a>
-              ))}
-            </motion.div>
+                    <span className="flex items-center gap-3">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 ring-1 ring-inset ring-gray-200/70 dark:ring-white/10 group-hover:ring-gray-400/60 transition-colors">
+                        <Github className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                      </span>
+                      <span className="text-left">
+                        <span className="block font-medium text-gray-900 dark:text-white">GitHub</span>
+                        <span className="block text-sm text-gray-500 dark:text-gray-400">Open-source projects</span>
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
+                  </a>
+
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-3 p-4 sm:p-5 hover:bg-blue-50/60 dark:hover:bg-blue-900/20 transition-colors"
+                    aria-label="LinkedIn"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100/80 dark:bg-blue-900/30 ring-1 ring-inset ring-blue-200/70 dark:ring-blue-500/30 group-hover:ring-blue-500/50 transition-colors">
+                        <Linkedin className="h-5 w-5 text-blue-700 dark:text-blue-300" />
+                      </span>
+                      <span className="text-left">
+                        <span className="block font-medium text-gray-900 dark:text-white">LinkedIn</span>
+                        <span className="block text-sm text-gray-500 dark:text-gray-400">Let’s connect professionally</span>
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                  </a>
+
+                  <a
+                    href="mailto:sarah@example.com"
+                    className="group flex items-center justify-between gap-3 p-4 sm:p-5 hover:bg-rose-50/60 dark:hover:bg-rose-900/20 transition-colors"
+                    aria-label="Email"
+                  >
+                    <span className="flex items-center gap-3">
+                      <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-rose-100/80 dark:bg-rose-900/30 ring-1 ring-inset ring-rose-200/70 dark:ring-rose-500/30 group-hover:ring-rose-500/50 transition-colors">
+                        <Mail className="h-5 w-5 text-rose-700 dark:text-rose-300" />
+                      </span>
+                      <span className="text-left">
+                        <span className="block font-medium text-gray-900 dark:text-white">Email</span>
+                        <span className="block text-sm text-gray-500 dark:text-gray-400">Get in touch</span>
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Floating avatar with actual photo */}
@@ -422,81 +410,9 @@ export default function Hero() {
               variants={floatingVariants}
               animate="animate"
             >
-              <motion.div
-                className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-full p-1 shadow-2xl"
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  rotate: {
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  },
-                  scale: {
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  },
-                }}
-                whileHover={{
-                  scale: 1.1,
-                  boxShadow: "0 25px 50px rgba(59, 130, 246, 0.4)",
-                }}
-              >
-                <div className="w-full h-full bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center relative overflow-hidden">
-                  <img src={myImage} alt="Tofayel" className="w-full h-full object-cover rounded-full" />
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-500/10"
-                    animate={{ opacity: [0.4, 0.8, 0.4] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                  />
-                </div>
-              </motion.div>
-              <motion.div
-                className="absolute -top-2 -right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white dark:border-gray-900"
-                animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [1, 0.7, 1],
-                  boxShadow: [
-                    "0 0 0 0 rgba(34, 197, 94, 0.7)",
-                    "0 0 0 10px rgba(34, 197, 94, 0)",
-                    "0 0 0 0 rgba(34, 197, 94, 0)",
-                  ],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute -bottom-4 -left-4 w-8 h-8 bg-yellow-400 rounded-full opacity-80"
-                animate={{
-                  scale: [0, 1, 0],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-              />
-              <motion.div
-                className="absolute -top-4 -left-4 w-6 h-6 bg-pink-400 rounded-full opacity-60"
-                animate={{
-                  scale: [1, 0, 1],
-                  rotate: [0, -180, -360],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5,
-                }}
-              />
+              <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden ring-1 ring-gray-200/60 dark:ring-white/10 bg-white/60 dark:bg-gray-900/40 backdrop-blur shadow-xl transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl">
+                <img src={myImage} alt="Tofayel" className="w-full h-full object-cover" />
+              </div>
             </motion.div>
           </motion.div>
         </motion.div>
