@@ -139,21 +139,21 @@ export default function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Right side - Image */}
+            {/* Right side - Creative Showcase */}
             <motion.div
               className="relative flex justify-center lg:justify-end"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
             >
-              <div className="relative">
-                {/* Background elements */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl blur-3xl" />
+              <div className="relative w-full max-w-lg">
+                {/* Background glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur-3xl" />
                 
-                {/* Main image container */}
+                {/* Main photo card */}
                 <motion.div
-                  className="relative w-80 h-96 rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm"
-                  whileHover={{ scale: 1.02 }}
+                  className="relative z-10 w-72 h-80 rounded-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm shadow-2xl"
+                  whileHover={{ scale: 1.02, y: -5 }}
                   transition={{ duration: 0.3 }}
                 >
                   <img 
@@ -161,34 +161,123 @@ export default function Hero() {
                     alt="Tofayel Islam" 
                     className="w-full h-full object-cover"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                   
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                  {/* Status indicator */}
+                  <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-green-500/90 backdrop-blur-sm rounded-full">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    <span className="text-xs font-medium text-white">Available</span>
+                  </div>
                 </motion.div>
 
-                {/* Floating accent elements */}
+                {/* Floating project cards */}
                 <motion.div
-                  className="absolute -top-4 -right-4 w-24 h-24 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm"
-                  animate={{
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
-                
+                  className="absolute -top-8 -left-8 w-48 h-32 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden"
+                  initial={{ opacity: 0, y: 20, rotate: -5 }}
+                  animate={{ opacity: 1, y: 0, rotate: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  whileHover={{ scale: 1.05, rotate: 2 }}
+                >
+                  <div className="h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full" />
+                      <span className="text-xs font-medium text-white/90">React App</span>
+                    </div>
+                    <h4 className="text-sm font-semibold text-white mb-1">E-Commerce Platform</h4>
+                    <p className="text-xs text-white/70">Modern shopping experience with real-time updates</p>
+                    <div className="flex gap-1 mt-3">
+                      {["React", "TypeScript", "Tailwind"].map((tech, i) => (
+                        <span key={tech} className="px-2 py-1 text-xs bg-white/10 rounded text-white/80">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+
                 <motion.div
-                  className="absolute -bottom-4 -left-4 w-16 h-16 border border-white/10 rounded-full bg-white/5 backdrop-blur-sm"
-                  animate={{
-                    rotate: [360, 0],
-                  }}
-                  transition={{
-                    duration: 15,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
+                  className="absolute -bottom-6 -right-6 w-44 h-28 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden"
+                  initial={{ opacity: 0, y: 20, rotate: 5 }}
+                  animate={{ opacity: 1, y: 0, rotate: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
+                  whileHover={{ scale: 1.05, rotate: -2 }}
+                >
+                  <div className="h-full bg-gradient-to-br from-green-500/20 to-teal-500/20 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full" />
+                      <span className="text-xs font-medium text-white/90">Next.js</span>
+                    </div>
+                    <h4 className="text-sm font-semibold text-white mb-1">Portfolio Website</h4>
+                    <p className="text-xs text-white/70">Personal branding & project showcase</p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute top-1/2 -right-12 w-40 h-24 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.9 }}
+                  whileHover={{ scale: 1.05, x: -5 }}
+                >
+                  <div className="h-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-2 h-2 bg-pink-400 rounded-full" />
+                      <span className="text-xs font-medium text-white/90">UI/UX</span>
+                    </div>
+                    <h4 className="text-sm font-semibold text-white">Design System</h4>
+                    <p className="text-xs text-white/70">Component library & design tokens</p>
+                  </div>
+                </motion.div>
+
+                {/* Floating tech badges */}
+                <motion.div
+                  className="absolute -top-4 right-8"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 1.1 }}
+                >
+                  <div className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    <span className="text-xs font-medium text-white">React Expert</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  className="absolute bottom-8 -left-4"
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 1.3 }}
+                >
+                  <div className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    <span className="text-xs font-medium text-white">TypeScript</span>
+                  </div>
+                </motion.div>
+
+                {/* Animated connection lines */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 400">
+                  <motion.path
+                    d="M 200 200 Q 100 150 50 100"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="1"
+                    fill="none"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, delay: 1.5 }}
+                  />
+                  <motion.path
+                    d="M 200 200 Q 300 150 350 100"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="1"
+                    fill="none"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, delay: 1.7 }}
+                  />
+                </svg>
+
+                {/* Interactive hover effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl border-2 border-transparent hover:border-white/30 transition-colors duration-300"
+                  whileHover={{ scale: 1.02 }}
                 />
               </div>
             </motion.div>
