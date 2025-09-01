@@ -172,28 +172,28 @@ export default function Contact() {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
             variants={containerVariants}
           >
-            <motion.div className="space-y-8" variants={itemVariants}>
+            <motion.div className="space-y-6 sm:space-y-8" variants={itemVariants}>
               <div>
                 <motion.h3
-                  className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3"
+                  className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3"
                   whileHover={{ x: 5 }}
                 >
                   <motion.div
                     animate={{ rotate: [0, 10, -10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <MessageCircle className="h-7 w-7 text-blue-600" />
+                    <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-blue-600" />
                   </motion.div>
                   Let's Start a Conversation
                 </motion.h3>
                 <motion.p
-                  className="text-gray-600 dark:text-gray-300 mb-8 text-base sm:text-lg leading-relaxed"
+                  className="text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 text-sm sm:text-base lg:text-lg leading-relaxed"
                   variants={itemVariants}
                 >
                   Whether you have a project in mind, want to collaborate, or
@@ -201,38 +201,38 @@ export default function Contact() {
                   message and I'll respond as soon as possible.
                 </motion.p>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {contactInfo.map((info, index) => (
                     <motion.div
                       key={index}
-                      className="flex items-center space-x-4 group"
+                      className="flex items-center space-x-3 sm:space-x-4 group"
                       variants={itemVariants}
                       whileHover={{ x: 5 }}
                     >
                       <motion.div
-                        className={`bg-gradient-to-r ${info.color} p-3 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow`}
+                        className={`bg-gradient-to-r ${info.color} p-2.5 sm:p-3 rounded-xl shadow-lg group-hover:shadow-xl transition-shadow`}
                         whileHover={{
                           scale: 1.1,
                           rotate: [0, -5, 5, 0],
                         }}
                         transition={{ duration: 0.3 }}
                       >
-                        <info.icon className="h-5 w-5 text-white" />
+                        <info.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                       </motion.div>
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                        <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm lg:text-base">
                           {info.label}
                         </p>
                         {info.link ? (
                           <motion.a
                             href={info.link}
-                            className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm sm:text-base"
+                            className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-xs sm:text-sm lg:text-base"
                             whileHover={{ scale: 1.02 }}
                           >
                             {info.value}
                           </motion.a>
                         ) : (
-                          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+                          <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm lg:text-base">
                             {info.value}
                           </p>
                         )}
@@ -241,16 +241,16 @@ export default function Contact() {
                   ))}
                 </div>
 
-                <motion.div className="pt-8" variants={itemVariants}>
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-4 text-base sm:text-lg">
+                <motion.div className="pt-6 sm:pt-8" variants={itemVariants}>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg">
                     Follow Me
                   </h4>
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-3 sm:space-x-4">
                     {socialLinks.map((social, index) => (
                       <motion.a
                         key={index}
                         href={social.url}
-                        className={`bg-gray-100 dark:bg-gray-800 p-3 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-all group ${social.color}`}
+                        className={`bg-gray-100 dark:bg-gray-800 p-2.5 sm:p-3 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-all group ${social.color}`}
                         aria-label={social.label}
                         whileHover={{
                           scale: 1.1,
@@ -261,7 +261,7 @@ export default function Contact() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <social.icon className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:scale-110 transition-transform" />
+                        <social.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400 group-hover:scale-110 transition-transform" />
                       </motion.a>
                     ))}
                   </div>
