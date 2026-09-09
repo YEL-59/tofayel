@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart, Download, Zap, Calendar, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart, Download, Zap, Calendar, ArrowUpRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import myImage from "../assets/me.jpg";
 import { useState, useMemo, useEffect } from "react";
@@ -15,6 +15,7 @@ export default function Hero({ initialProfile, onOpenContact }: HeroProps) {
   const { toast } = useToast();
   const [profile, setProfile] = useState<Profile>(initialProfile || fallbackProfile);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCVPreviewOpen, setIsCVPreviewOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
@@ -291,11 +292,11 @@ export default function Hero({ initialProfile, onOpenContact }: HeroProps) {
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button
                       variant="ghost"
-                      onClick={handleDownloadCV}
-                      className="bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white px-5 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
+                      onClick={() => setIsCVPreviewOpen(true)}
+                      className="bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white px-5 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2 group"
                     >
-                      <Download className="w-4 h-4 text-emerald-400" />
-                      CV
+                      <FileText className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                      <span>CV (PDF Preview)</span>
                     </Button>
                   </motion.div>
                 </motion.div>
@@ -934,6 +935,78 @@ export default function Hero({ initialProfile, onOpenContact }: HeroProps) {
               </div>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* PDF Resume In-Browser Preview & Download Modal */}
+      <AnimatePresence>
+        {isCVPreviewOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-5xl h-[92vh] bg-slate-900 border border-white/10 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                      Resume / CV Document
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                        PDF Format
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      {profile.cvFileName || "Tofayel_Islam_Resume.pdf"} • Generated in High Definition
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Button
+                    size="sm"
+                    onClick={handleDownloadCV}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs px-3 sm:px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-blue-500/20 font-semibold"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download PDF</span>
+                  </Button>
+
+                  <a
+                    href={portfolioAPI.getCVPreviewUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors"
+                    title="Open in new window"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+
+                  <button
+                    onClick={() => setIsCVPreviewOpen(false)}
+                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                    title="Close"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* PDF Preview Frame */}
+              <div className="flex-1 bg-slate-950 p-2 sm:p-4">
+                <iframe
+                  src={portfolioAPI.getCVPreviewUrl()}
+                  title="PDF Resume Preview"
+                  className="w-full h-full rounded-xl border border-white/10 bg-slate-900 shadow-inner"
+                />
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>
