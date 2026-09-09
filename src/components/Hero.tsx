@@ -501,13 +501,13 @@ export default function Hero({ initialProfile }: HeroProps) {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
                           transition={{ duration: 0.3, delay: index * 0.05 }}
-                          className="group relative transition-all duration-300"
+                          className="group relative transition-all duration-300 rounded-2xl border border-white/10 hover:border-white/25 bg-white/[0.02] hover:bg-white/[0.04] p-3.5 sm:p-4 backdrop-blur-md"
                           whileHover={{ y: -5 }}
                         >
                           {viewMode === "grid" ? (
                             <div className="flex flex-col h-full bg-transparent overflow-hidden transition-all duration-500 relative">
                               {/* macOS Chrome Header Strip (Transparent) */}
-                              <div className="px-1 py-2 bg-transparent flex items-center justify-between text-xs mb-1">
+                              <div className="px-1 py-1 bg-transparent flex items-center justify-between text-xs mb-2.5">
                                 <div className="flex items-center gap-1.5">
                                   <span className="w-2 h-2 rounded-full bg-red-500/80" />
                                   <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
@@ -525,7 +525,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                               </div>
 
                               {/* Project Image Viewport */}
-                              <div className="relative h-48 overflow-hidden rounded-2xl bg-transparent">
+                              <div className="relative h-44 sm:h-48 overflow-hidden rounded-xl bg-transparent">
                                 <img
                                   src={project.image}
                                   alt={project.title}
