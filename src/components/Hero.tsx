@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface HeroProps {
   initialProfile?: Profile;
+  onOpenContact?: () => void;
 }
 
-export default function Hero({ initialProfile }: HeroProps) {
+export default function Hero({ initialProfile, onOpenContact }: HeroProps) {
   const { toast } = useToast();
   const [profile, setProfile] = useState<Profile>(initialProfile || fallbackProfile);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -273,7 +274,12 @@ export default function Hero({ initialProfile }: HeroProps) {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                        if (onOpenContact) {
+                          onOpenContact();
+                        } else {
+                          window.history.pushState(null, "", "/contact");
+                          window.dispatchEvent(new PopStateEvent("popstate"));
+                        }
                       }}
                       className="bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2 hover:border-purple-400/40"
                     >
@@ -304,18 +310,23 @@ export default function Hero({ initialProfile }: HeroProps) {
                   {[
                     { icon: Github, href: profile.socialLinks?.github || "https://github.com/yel-59", label: "GitHub" },
                     { icon: Linkedin, href: profile.socialLinks?.linkedin || "https://linkedin.com", label: "LinkedIn" },
-                    { icon: Mail, href: "#contact", label: "Message Me", isScroll: true },
+                    { icon: Mail, href: "/contact", label: "Message Me", isContact: true },
                   ].map((social, index) => (
                     <motion.a
                       key={social.label}
                       href={social.href}
-                      target={social.isScroll ? undefined : "_blank"}
-                      rel={social.isScroll ? undefined : "noopener noreferrer"}
+                      target={social.isContact ? undefined : "_blank"}
+                      rel={social.isContact ? undefined : "noopener noreferrer"}
                       onClick={
-                        social.isScroll
+                        social.isContact
                           ? (e) => {
                               e.preventDefault();
-                              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                              if (onOpenContact) {
+                                onOpenContact();
+                              } else {
+                                window.history.pushState(null, "", "/contact");
+                                window.dispatchEvent(new PopStateEvent("popstate"));
+                              }
                             }
                           : undefined
                       }
