@@ -25,7 +25,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 // Flexible CORS configuration for Local & Production (Vercel, Netlify, Custom Domains)
 const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(',').map((u) => u.trim())
+  ? process.env.CLIENT_URL.split(',').map((u) => u.trim().replace(/\/$/, ''))
   : ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
 app.use(
@@ -33,13 +33,14 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, health checks)
       if (!origin) return callback(null, true);
+      const cleanOrigin = origin.replace(/\/$/, '');
       if (
         allowedOrigins.includes('*') ||
-        allowedOrigins.includes(origin) ||
-        origin.endsWith('.vercel.app') ||
-        origin.endsWith('.netlify.app') ||
-        origin.includes('localhost') ||
-        origin.includes('127.0.0.1')
+        allowedOrigins.includes(cleanOrigin) ||
+        cleanOrigin.endsWith('.vercel.app') ||
+        cleanOrigin.endsWith('.netlify.app') ||
+        cleanOrigin.includes('localhost') ||
+        cleanOrigin.includes('127.0.0.1')
       ) {
         return callback(null, true);
       }
@@ -53,6 +54,24 @@ app.use(morgan('dev'));
 
 // Static uploads directory
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Root Endpoint (Prevents Render 404s on GET /)
+app.get('/', (req, res) => {
+  const dbStatus = mongoose.connection.readyState;
+  res.status(200).json({
+    status: 'online',
+    message: 'Tofayel Portfolio MERN Backend API is running successfully 🚀',
+    database: dbStatus === 1 ? 'Connected to MongoDB Atlas' : 'Running offline fallback',
+    endpoints: {
+      health: '/api/health',
+      profile: '/api/profile',
+      projects: '/api/projects',
+      cvInfo: '/api/cv/info',
+      cvDownload: '/api/cv/download',
+      messages: '/api/messages',
+    },
+  });
+});
 
 // Health Check
 app.get('/api/health', (req, res) => {
