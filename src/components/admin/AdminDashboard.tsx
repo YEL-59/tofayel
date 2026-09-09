@@ -73,6 +73,85 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
   const [projects, setProjects] = useState<Project[]>(fallbackProjects);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [modalCategoryInput, setModalCategoryInput] = useState("");
+  const [modalBadgeInput, setModalBadgeInput] = useState("");
+  const [modalTechInput, setModalTechInput] = useState("");
+
+  const handleAddCategoryBadge = () => {
+    if (!modalCategoryInput.trim() || !editingProject) return;
+    const cat = modalCategoryInput.trim();
+    const current =
+      editingProject.categories && editingProject.categories.length > 0
+        ? editingProject.categories
+        : [editingProject.category].filter(Boolean);
+    if (!current.includes(cat)) {
+      const updated = [...current, cat];
+      setEditingProject({
+        ...editingProject,
+        categories: updated,
+        category: updated[0] || cat,
+      });
+    }
+    setModalCategoryInput("");
+  };
+
+  const handleRemoveCategoryBadge = (catToRemove: string) => {
+    if (!editingProject) return;
+    const current =
+      editingProject.categories && editingProject.categories.length > 0
+        ? editingProject.categories
+        : [editingProject.category].filter(Boolean);
+    const updated = current.filter((c) => c !== catToRemove);
+    setEditingProject({
+      ...editingProject,
+      categories: updated,
+      category: updated[0] || "Full-Stack",
+    });
+  };
+
+  const handleAddCustomBadge = () => {
+    if (!modalBadgeInput.trim() || !editingProject) return;
+    const badge = modalBadgeInput.trim();
+    const current = editingProject.badges || [];
+    if (!current.includes(badge)) {
+      setEditingProject({
+        ...editingProject,
+        badges: [...current, badge],
+      });
+    }
+    setModalBadgeInput("");
+  };
+
+  const handleRemoveCustomBadge = (badgeToRemove: string) => {
+    if (!editingProject) return;
+    const current = editingProject.badges || [];
+    setEditingProject({
+      ...editingProject,
+      badges: current.filter((b) => b !== badgeToRemove),
+    });
+  };
+
+  const handleAddTechPill = () => {
+    if (!modalTechInput.trim() || !editingProject) return;
+    const tech = modalTechInput.trim();
+    const current = editingProject.tech || [];
+    if (!current.includes(tech)) {
+      setEditingProject({
+        ...editingProject,
+        tech: [...current, tech],
+      });
+    }
+    setModalTechInput("");
+  };
+
+  const handleRemoveTechPill = (techToRemove: string) => {
+    if (!editingProject) return;
+    const current = editingProject.tech || [];
+    setEditingProject({
+      ...editingProject,
+      tech: current.filter((t) => t !== techToRemove),
+    });
+  };
 
   // CV State
   const [cvInfo, setCvInfo] = useState<CVInfo | null>(null);
@@ -478,6 +557,9 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
               <Button
                 size="sm"
                 onClick={() => {
+                  setModalCategoryInput("");
+                  setModalBadgeInput("");
+                  setModalTechInput("");
                   setEditingProject({
                     title: "",
                     description: "",
@@ -485,14 +567,16 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     liveLink: "",
                     githubLink: "",
                     tech: ["React", "TypeScript", "Tailwind CSS"],
-                    category: "Full-Stack",
+                    category: "Portfolio",
+                    categories: ["Portfolio"],
+                    badges: [],
                     status: "Live",
-                    rating: 5.0,
-                    views: 0,
-                    likes: 0,
+                    rating: 4.7,
+                    views: 890,
+                    likes: 67,
                     featured: false,
                     architectureTag: "Full-Stack Architecture",
-                    year: "2024",
+                    year: "2024 Edition",
                     showChrome: true,
                     showCategory: true,
                     showStatus: true,
@@ -713,10 +797,18 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                         <div className="flex items-center gap-1 shrink-0">
                           <button
                             onClick={() => {
+                              setModalCategoryInput("");
+                              setModalBadgeInput("");
+                              setModalTechInput("");
                               setEditingProject({
                                 ...proj,
+                                categories:
+                                  proj.categories && proj.categories.length > 0
+                                    ? proj.categories
+                                    : [proj.category || "Portfolio"],
+                                badges: proj.badges || [],
                                 architectureTag: proj.architectureTag ?? "Full-Stack Architecture",
-                                year: proj.year ?? "2024",
+                                year: proj.year ?? "2024 Edition",
                                 showChrome: proj.showChrome !== false,
                                 showCategory: proj.showCategory !== false,
                                 showStatus: proj.showStatus !== false,
@@ -1033,37 +1125,126 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                   />
                 </div>
 
-                {/* Category & Status */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-semibold text-slate-300 block mb-1">Category</label>
-                    <select
-                      value={editingProject.category}
-                      onChange={(e) =>
-                        setEditingProject({ ...editingProject, category: e.target.value })
-                      }
-                      className="w-full h-10 px-3 rounded-md bg-slate-950 border border-white/10 text-xs text-white focus:outline-none"
-                    >
-                      {["Full-Stack", "Web App", "Portfolio", "AI/ML", "Analytics", "Game Dev", "Mobile"].map(
-                        (c) => (
-                          <option key={c} value={c} className="bg-slate-900 text-white">
-                            {c}
-                          </option>
-                        )
-                      )}
-                    </select>
+                {/* Categories with + button (Multiple Allowed) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300 block">
+                      Category Badges (Multiple Allowed)
+                    </label>
+                    <span className="text-[10px] text-slate-400">Type & click + to add multiple categories</span>
                   </div>
-                  <div>
-                    <label className="text-xs font-semibold text-slate-300 block mb-1">Status Badge Text</label>
+                  <div className="flex gap-2">
                     <Input
-                      value={editingProject.status}
-                      onChange={(e) =>
-                        setEditingProject({ ...editingProject, status: e.target.value })
-                      }
-                      placeholder="e.g. Live, Beta, In Progress"
-                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                      value={modalCategoryInput}
+                      onChange={(e) => setModalCategoryInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCategoryBadge();
+                        }
+                      }}
+                      placeholder="e.g. Portfolio, Web App, AI/ML, Full-Stack..."
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10 flex-1"
                     />
+                    <Button
+                      type="button"
+                      onClick={handleAddCategoryBadge}
+                      className="bg-blue-600 hover:bg-blue-500 text-white px-4 h-10 flex items-center gap-1.5 text-xs shrink-0 shadow-md shadow-blue-600/30"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Category</span>
+                    </Button>
                   </div>
+
+                  {/* Category Pills List */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {(editingProject.categories && editingProject.categories.length > 0
+                      ? editingProject.categories
+                      : [editingProject.category].filter(Boolean)
+                    ).map((cat, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 border border-blue-400/40 text-blue-300 uppercase tracking-wider shadow-sm"
+                      >
+                        <span>{cat}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveCategoryBadge(cat)}
+                          className="hover:text-white p-0.5 rounded-full hover:bg-blue-500/30 transition-colors"
+                          title="Remove category badge"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Custom Badges with + button */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300 block">
+                      Additional Custom Badges (Multiple Allowed)
+                    </label>
+                    <span className="text-[10px] text-slate-400">e.g. Featured, Open Source, High Performance</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={modalBadgeInput}
+                      onChange={(e) => setModalBadgeInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomBadge();
+                        }
+                      }}
+                      placeholder="Type custom badge & press Enter or +..."
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10 flex-1"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleAddCustomBadge}
+                      className="bg-purple-600 hover:bg-purple-500 text-white px-4 h-10 flex items-center gap-1.5 text-xs shrink-0 shadow-md shadow-purple-600/30"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Badge</span>
+                    </Button>
+                  </div>
+
+                  {/* Custom Badges Pills List */}
+                  {editingProject.badges && editingProject.badges.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {editingProject.badges.map((badge, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 border border-purple-400/40 text-purple-300 uppercase tracking-wider shadow-sm"
+                        >
+                          <span>{badge}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomBadge(badge)}
+                            className="hover:text-white p-0.5 rounded-full hover:bg-purple-500/30 transition-colors"
+                            title="Remove badge"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Status Badge Text */}
+                <div>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1">Status Badge Text</label>
+                  <Input
+                    value={editingProject.status || ""}
+                    onChange={(e) =>
+                      setEditingProject({ ...editingProject, status: e.target.value })
+                    }
+                    placeholder="e.g. Live, Beta, Completed, In Progress"
+                    className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                  />
                 </div>
 
                 {/* Architecture Sub-tag & Year */}
@@ -1086,31 +1267,63 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, year: e.target.value })
                       }
-                      placeholder="e.g. 2024"
+                      placeholder="e.g. 2024 Edition"
                       className="bg-slate-950 border-white/10 text-white text-xs h-10"
                     />
                   </div>
                 </div>
 
-                {/* Tech Stack Pills Input */}
-                <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">
-                    Technologies / Skills (Comma-separated)
-                  </label>
-                  <Input
-                    value={editingProject.tech?.join(", ") || ""}
-                    onChange={(e) =>
-                      setEditingProject({
-                        ...editingProject,
-                        tech: e.target.value
-                          .split(",")
-                          .map((t) => t.trim())
-                          .filter(Boolean),
-                      })
-                    }
-                    placeholder="React, TypeScript, Next.js, Tailwind CSS, PostgreSQL"
-                    className="bg-slate-950 border-white/10 text-white text-xs h-10"
-                  />
+                {/* Tech Stack Pills with + Button */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-300 block">
+                      Technologies / Stack Pills (Add Multiple)
+                    </label>
+                    <span className="text-[10px] text-slate-400">Add individual tech tags</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      value={modalTechInput}
+                      onChange={(e) => setModalTechInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddTechPill();
+                        }
+                      }}
+                      placeholder="e.g. React, TypeScript, Framer Motion, Tailwind CSS..."
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10 flex-1"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleAddTechPill}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 h-10 flex items-center gap-1.5 text-xs shrink-0 shadow-md shadow-emerald-600/30"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Tech</span>
+                    </Button>
+                  </div>
+
+                  {/* Tech Pills Display */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {(editingProject.tech || []).map((t, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-950/80 border border-white/20 text-slate-200 shadow-sm"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                        <span>{t}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTechPill(t)}
+                          className="hover:text-red-400 p-0.5 rounded hover:bg-white/10 transition-colors ml-0.5"
+                          title="Remove tech"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Telemetry Stats: Rating, Views, Likes */}

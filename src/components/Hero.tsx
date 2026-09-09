@@ -79,17 +79,30 @@ export default function Hero({ initialProfile }: HeroProps) {
     document.body.removeChild(link);
   };
 
-  const categories = ["All", "Full-Stack", "Web App", "Portfolio", "AI/ML", "Analytics", "Game Dev", "Mobile", "Finance"];
+  const categories = useMemo(() => {
+    const set = new Set<string>(["All"]);
+    projects.forEach((p) => {
+      if (p.category) set.add(p.category);
+      if (p.categories && Array.isArray(p.categories)) {
+        p.categories.forEach((c) => c && set.add(c));
+      }
+    });
+    return Array.from(set);
+  }, [projects]);
 
   const filteredProjects = useMemo(() => {
-    return projects.filter(project => {
-      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           project.tech.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesCategory = selectedCategory === "All" || project.category === selectedCategory;
+    return projects.filter((project) => {
+      const matchesSearch =
+        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (project.tech && project.tech.some((tech) => tech.toLowerCase().includes(searchTerm.toLowerCase())));
+      const matchesCategory =
+        selectedCategory === "All" ||
+        project.category === selectedCategory ||
+        (project.categories && project.categories.includes(selectedCategory));
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [projects, searchTerm, selectedCategory]);
 
   return (
     <>
@@ -410,10 +423,10 @@ export default function Hero({ initialProfile }: HeroProps) {
             </div>
 
             {/* Modal Container */}
-            <div className="relative h-full overflow-hidden">
+            <div className="relative h-full flex flex-col overflow-hidden">
               {/* Header */}
               <motion.div
-                className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-gray-900/80 backdrop-blur-xl border-b border-white/10"
+                className="flex-shrink-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-gray-900/90 backdrop-blur-xl border-b border-white/10"
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -432,7 +445,7 @@ export default function Hero({ initialProfile }: HeroProps) {
 
               {/* Search and Filter Bar */}
               <motion.div
-                className="sticky top-16 sm:top-20 z-10 p-4 sm:p-6 bg-gray-900/60 backdrop-blur-xl border-b border-white/10"
+                className="flex-shrink-0 z-10 p-4 sm:p-6 bg-gray-900/75 backdrop-blur-xl border-b border-white/10"
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -490,8 +503,8 @@ export default function Hero({ initialProfile }: HeroProps) {
               </motion.div>
 
               {/* Projects Container */}
-              <div className="h-[calc(100vh-180px)] sm:h-[calc(100vh-200px)] overflow-y-auto">
-                <div className="p-4 sm:p-6">
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="p-4 sm:p-6 pb-20">
                   {filteredProjects.length === 0 ? (
                     <motion.div
                       className="text-center py-12 sm:py-20"
@@ -512,7 +525,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                     >
                       {filteredProjects.map((project, index) => (
                         <motion.div
-                          key={project.id}
+                          key={project._id || project.id || index}
                           layout
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -533,11 +546,29 @@ export default function Hero({ initialProfile }: HeroProps) {
                                       <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
                                     </div>
                                   ) : <div />}
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2 flex-wrap justify-end">
                                     {project.showCategory !== false && (
-                                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-blue-400/40 text-blue-300 uppercase tracking-wider">
-                                        {project.category}
-                                      </span>
+                                      <>
+                                        {(project.categories && project.categories.length > 0
+                                          ? project.categories
+                                          : [project.category].filter(Boolean)
+                                        ).map((cat, catIdx) => (
+                                          <span
+                                            key={`cat-${catIdx}`}
+                                            className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-blue-400/40 text-blue-300 uppercase tracking-wider"
+                                          >
+                                            {cat}
+                                          </span>
+                                        ))}
+                                        {project.badges && project.badges.length > 0 && project.badges.map((badge, badgeIdx) => (
+                                          <span
+                                            key={`badge-${badgeIdx}`}
+                                            className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-purple-400/40 text-purple-300 uppercase tracking-wider"
+                                          >
+                                            {badge}
+                                          </span>
+                                        ))}
+                                      </>
                                     )}
                                     {project.showStatus !== false && (
                                       <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-emerald-400/40 text-emerald-300">
@@ -563,12 +594,12 @@ export default function Hero({ initialProfile }: HeroProps) {
                                   <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white/90 text-xs shadow-lg">
                                     <div className="flex items-center gap-1 text-yellow-400 font-semibold">
                                       <Star className="h-3 w-3 fill-yellow-400" />
-                                      <span>{project.rating || 4.9}</span>
+                                      <span>{project.rating ?? 4.7}</span>
                                     </div>
                                     <span className="text-white/30">•</span>
                                     <div className="flex items-center gap-1 text-slate-300">
                                       <Eye className="h-3 w-3 text-slate-400" />
-                                      <span>{project.views || 890}</span>
+                                      <span>{project.views ?? 890}</span>
                                     </div>
                                   </div>
                                 )}
@@ -586,7 +617,13 @@ export default function Hero({ initialProfile }: HeroProps) {
                                       </div>
                                       <div className="flex items-center gap-1 text-purple-300 font-medium">
                                         <Calendar className="w-3 h-3 text-purple-400" />
-                                        <span>{project.year ? `${project.year} Edition` : "2024 Edition"}</span>
+                                        <span>
+                                          {project.year
+                                            ? project.year.toLowerCase().includes("edition")
+                                              ? project.year
+                                              : `${project.year} Edition`
+                                            : "2024 Edition"}
+                                        </span>
                                       </div>
                                     </div>
                                   )}
@@ -621,7 +658,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                                   {/* Tech Stack Pills (Transparent Glass Badges) */}
                                   {project.showTech !== false && project.tech && project.tech.length > 0 && (
                                     <div className="flex flex-wrap gap-1.5 mt-3">
-                                      {project.tech.slice(0, 4).map((tech) => (
+                                      {project.tech.map((tech) => (
                                         <span
                                           key={tech}
                                           className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-transparent border border-white/20 hover:border-white/40 text-slate-200 text-[11px] font-medium rounded-lg transition-colors"
@@ -630,11 +667,6 @@ export default function Hero({ initialProfile }: HeroProps) {
                                           {tech}
                                         </span>
                                       ))}
-                                      {project.tech.length > 4 && (
-                                        <span className="px-2 py-1 bg-transparent border border-white/15 text-slate-400 text-[11px] rounded-lg">
-                                          +{project.tech.length - 4}
-                                        </span>
-                                      )}
                                     </div>
                                   )}
                                 </div>

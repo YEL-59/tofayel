@@ -30,9 +30,16 @@ const projectSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      required: true,
       default: 'Full-Stack',
-      enum: ['All', 'Full-Stack', 'Web App', 'Portfolio', 'AI/ML', 'Analytics', 'Game Dev', 'Mobile', 'Finance', 'UI/UX'],
+      trim: true,
+    },
+    categories: {
+      type: [String],
+      default: ['Full-Stack'],
+    },
+    badges: {
+      type: [String],
+      default: [],
     },
     status: {
       type: String,

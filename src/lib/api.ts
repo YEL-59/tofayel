@@ -16,6 +16,8 @@ export interface Project {
   githubLink: string;
   tech: string[];
   category: string;
+  categories?: string[];
+  badges?: string[];
   status: string;
   rating: number;
   views: number;
