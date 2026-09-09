@@ -32,6 +32,14 @@ export default function Hero({ initialProfile }: HeroProps) {
 
   const [projects, setProjects] = useState<Project[]>(fallbackProjects);
 
+  const loadFreshProjects = () => {
+    portfolioAPI.getProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjects(data);
+      }
+    });
+  };
+
   useEffect(() => {
     if (initialProfile) {
       setProfile(initialProfile);
@@ -41,12 +49,21 @@ export default function Hero({ initialProfile }: HeroProps) {
       });
     }
 
-    portfolioAPI.getProjects().then((data) => {
-      if (data && data.length > 0) {
-        setProjects(data);
-      }
-    });
+    loadFreshProjects();
+
+    const handleUpdate = () => {
+      loadFreshProjects();
+    };
+
+    window.addEventListener("portfolio_projects_updated", handleUpdate);
+    return () => window.removeEventListener("portfolio_projects_updated", handleUpdate);
   }, [initialProfile]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      loadFreshProjects();
+    }
+  }, [isModalOpen]);
 
   const handleDownloadCV = () => {
     toast({
@@ -507,22 +524,30 @@ export default function Hero({ initialProfile }: HeroProps) {
                           {viewMode === "grid" ? (
                             <div className="flex flex-col h-full bg-transparent overflow-hidden transition-all duration-500 relative">
                               {/* macOS Chrome Header Strip (Transparent) */}
-                              <div className="px-1 py-1 bg-transparent flex items-center justify-between text-xs mb-2.5">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="w-2 h-2 rounded-full bg-red-500/80" />
-                                  <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
-                                  <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                              {(project.showChrome !== false || project.showCategory !== false || project.showStatus !== false) && (
+                                <div className="px-1 py-1 bg-transparent flex items-center justify-between text-xs mb-2.5">
+                                  {project.showChrome !== false ? (
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                                      <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
+                                      <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                                    </div>
+                                  ) : <div />}
+                                  <div className="flex items-center gap-2">
+                                    {project.showCategory !== false && (
+                                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-blue-400/40 text-blue-300 uppercase tracking-wider">
+                                        {project.category}
+                                      </span>
+                                    )}
+                                    {project.showStatus !== false && (
+                                      <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-emerald-400/40 text-emerald-300">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        {project.status || "Live"}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-blue-400/40 text-blue-300 uppercase tracking-wider">
-                                    {project.category}
-                                  </span>
-                                  <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-transparent border border-emerald-400/40 text-emerald-300">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    {project.status || "Live"}
-                                  </span>
-                                </div>
-                              </div>
+                              )}
 
                               {/* Project Image Viewport */}
                               <div className="relative h-44 sm:h-48 overflow-hidden rounded-xl bg-transparent">
@@ -534,52 +559,58 @@ export default function Hero({ initialProfile }: HeroProps) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                                 {/* Floating Telemetry Badge (Transparent Glass) */}
-                                <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white/90 text-xs shadow-lg">
-                                  <div className="flex items-center gap-1 text-yellow-400 font-semibold">
-                                    <Star className="h-3 w-3 fill-yellow-400" />
-                                    <span>{project.rating || 4.9}</span>
+                                {project.showTelemetry !== false && (
+                                  <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white/90 text-xs shadow-lg">
+                                    <div className="flex items-center gap-1 text-yellow-400 font-semibold">
+                                      <Star className="h-3 w-3 fill-yellow-400" />
+                                      <span>{project.rating || 4.9}</span>
+                                    </div>
+                                    <span className="text-white/30">•</span>
+                                    <div className="flex items-center gap-1 text-slate-300">
+                                      <Eye className="h-3 w-3 text-slate-400" />
+                                      <span>{project.views || 890}</span>
+                                    </div>
                                   </div>
-                                  <span className="text-white/30">•</span>
-                                  <div className="flex items-center gap-1 text-slate-300">
-                                    <Eye className="h-3 w-3 text-slate-400" />
-                                    <span>{project.views || 890}</span>
-                                  </div>
-                                </div>
+                                )}
                               </div>
 
                               {/* Bento Content Body */}
                               <div className="py-4 flex-1 flex flex-col justify-between space-y-4">
                                 <div>
                                   {/* Spec Telemetry Strip (Architecture & Year) */}
-                                  <div className="flex items-center justify-between text-[11px] mb-2.5 pb-2 border-b border-white/10">
-                                    <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
-                                      <Zap className="w-3 h-3 text-cyan-400" />
-                                      <span>Full-Stack Architecture</span>
+                                  {project.showSpecs !== false && (
+                                    <div className="flex items-center justify-between text-[11px] mb-2.5 pb-2 border-b border-white/10">
+                                      <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
+                                        <Zap className="w-3 h-3 text-cyan-400" />
+                                        <span>{project.architectureTag || "Full-Stack Architecture"}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1 text-purple-300 font-medium">
+                                        <Calendar className="w-3 h-3 text-purple-400" />
+                                        <span>{project.year ? `${project.year} Edition` : "2024 Edition"}</span>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center gap-1 text-purple-300 font-medium">
-                                      <Calendar className="w-3 h-3 text-purple-400" />
-                                      <span>2024 Edition</span>
-                                    </div>
-                                  </div>
+                                  )}
 
                                   {/* Title & Heart Button */}
                                   <div className="flex items-start justify-between gap-2 mb-1.5">
                                     <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-blue-200 group-hover:to-purple-200 transition-all">
                                       {project.title}
                                     </h3>
-                                    <button
-                                      onClick={() => toggleLike(project._id || project.id || index)}
-                                      className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-red-400 transition-colors shrink-0"
-                                      title="Like Project"
-                                    >
-                                      <Heart
-                                        className={`h-4 w-4 transition-colors ${
-                                          likedProjects[project._id || project.id || index]
-                                            ? "fill-red-500 text-red-500 scale-110"
-                                            : ""
-                                        }`}
-                                      />
-                                    </button>
+                                    {project.showLikes !== false && (
+                                      <button
+                                        onClick={() => toggleLike(project._id || project.id || index)}
+                                        className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-red-400 transition-colors shrink-0"
+                                        title="Like Project"
+                                      >
+                                        <Heart
+                                          className={`h-4 w-4 transition-colors ${
+                                            likedProjects[project._id || project.id || index]
+                                              ? "fill-red-500 text-red-500 scale-110"
+                                              : ""
+                                          }`}
+                                        />
+                                      </button>
+                                    )}
                                   </div>
 
                                   {/* Description */}
@@ -588,46 +619,54 @@ export default function Hero({ initialProfile }: HeroProps) {
                                   </p>
 
                                   {/* Tech Stack Pills (Transparent Glass Badges) */}
-                                  <div className="flex flex-wrap gap-1.5 mt-3">
-                                    {project.tech.slice(0, 4).map((tech) => (
-                                      <span
-                                        key={tech}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-transparent border border-white/20 hover:border-white/40 text-slate-200 text-[11px] font-medium rounded-lg transition-colors"
-                                      >
-                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                                        {tech}
-                                      </span>
-                                    ))}
-                                    {project.tech.length > 4 && (
-                                      <span className="px-2 py-1 bg-transparent border border-white/15 text-slate-400 text-[11px] rounded-lg">
-                                        +{project.tech.length - 4}
-                                      </span>
-                                    )}
-                                  </div>
+                                  {project.showTech !== false && project.tech && project.tech.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5 mt-3">
+                                      {project.tech.slice(0, 4).map((tech) => (
+                                        <span
+                                          key={tech}
+                                          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-transparent border border-white/20 hover:border-white/40 text-slate-200 text-[11px] font-medium rounded-lg transition-colors"
+                                        >
+                                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                                          {tech}
+                                        </span>
+                                      ))}
+                                      {project.tech.length > 4 && (
+                                        <span className="px-2 py-1 bg-transparent border border-white/15 text-slate-400 text-[11px] rounded-lg">
+                                          +{project.tech.length - 4}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
                                 </div>
 
                                 {/* Bento Bottom Actions */}
-                                <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-                                  <a
-                                    href={project.liveLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-1 h-10 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-1.5 group/btn transition-all duration-300 hover:scale-[1.02]"
-                                  >
-                                    <span>Live Demo</span>
-                                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                                  </a>
-                                  <a
-                                    href={project.githubLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                                    title="View Source Code"
-                                  >
-                                    <Github className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline">Code</span>
-                                  </a>
-                                </div>
+                                {(project.showLive !== false || project.showGithub !== false) && (
+                                  <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+                                    {project.showLive !== false && (
+                                      <a
+                                        href={project.liveLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 h-10 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-1.5 group/btn transition-all duration-300 hover:scale-[1.02]"
+                                      >
+                                        <span>Live Demo</span>
+                                        <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                                      </a>
+                                    )}
+                                    {project.showGithub !== false && (
+                                      <a
+                                        href={project.githubLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                                        title="View Source Code"
+                                      >
+                                        <Github className="w-3.5 h-3.5" />
+                                        <span className="hidden sm:inline">Code</span>
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ) : (

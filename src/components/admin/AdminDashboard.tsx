@@ -19,7 +19,14 @@ import {
   LogOut,
   Menu,
   X,
-  Database
+  Database,
+  Sliders,
+  Eye,
+  Heart,
+  Zap,
+  Layers,
+  Globe,
+  Code
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -186,6 +193,7 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
       setIsProjectModalOpen(false);
       setEditingProject(null);
       loadProjects();
+      window.dispatchEvent(new CustomEvent("portfolio_projects_updated"));
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
@@ -217,6 +225,7 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
       if (deleteTarget.type === "project") {
         await portfolioAPI.deleteProject(deleteTarget.id);
         setProjects((prev) => prev.filter((p) => p._id !== deleteTarget.id));
+        window.dispatchEvent(new CustomEvent("portfolio_projects_updated"));
         toast({
           title: "Project Deleted",
           description: `"${deleteTarget.name}" has been removed from MongoDB.`,
@@ -475,13 +484,24 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
                     liveLink: "",
                     githubLink: "",
-                    tech: ["React", "TypeScript"],
-                    category: "Web App",
+                    tech: ["React", "TypeScript", "Tailwind CSS"],
+                    category: "Full-Stack",
                     status: "Live",
                     rating: 5.0,
                     views: 0,
                     likes: 0,
                     featured: false,
+                    architectureTag: "Full-Stack Architecture",
+                    year: "2024",
+                    showChrome: true,
+                    showCategory: true,
+                    showStatus: true,
+                    showTelemetry: true,
+                    showSpecs: true,
+                    showTech: true,
+                    showLikes: true,
+                    showLive: true,
+                    showGithub: true,
                   });
                   setIsProjectModalOpen(true);
                 }}
@@ -693,7 +713,20 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                         <div className="flex items-center gap-1 shrink-0">
                           <button
                             onClick={() => {
-                              setEditingProject(proj);
+                              setEditingProject({
+                                ...proj,
+                                architectureTag: proj.architectureTag ?? "Full-Stack Architecture",
+                                year: proj.year ?? "2024",
+                                showChrome: proj.showChrome !== false,
+                                showCategory: proj.showCategory !== false,
+                                showStatus: proj.showStatus !== false,
+                                showTelemetry: proj.showTelemetry !== false,
+                                showSpecs: proj.showSpecs !== false,
+                                showTech: proj.showTech !== false,
+                                showLikes: proj.showLikes !== false,
+                                showLive: proj.showLive !== false,
+                                showGithub: proj.showGithub !== false,
+                              });
                               setIsProjectModalOpen(true);
                             }}
                             className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
@@ -949,25 +982,31 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
         {isProjectModalOpen && editingProject && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
             <motion.div
-              className="w-full max-w-lg bg-slate-900 border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-white"
+              className="w-full max-w-2xl bg-slate-900 border border-white/20 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto text-white"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
             >
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <FolderGit2 className="w-4 h-4 text-purple-400" />
-                  {editingProject._id ? "Edit Project Details" : "Add New Showcase Project"}
-                </h3>
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <FolderGit2 className="w-5 h-5 text-purple-400" />
+                    {editingProject._id ? "Edit Project & Card Controls" : "Add New Showcase Project"}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Customize project content and toggle frontend card components on or off
+                  </p>
+                </div>
                 <button
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSaveProject} className="space-y-3.5">
+              <form onSubmit={handleSaveProject} className="space-y-4">
+                {/* 1. Basic Information */}
                 <div>
                   <label className="text-xs font-semibold text-slate-300 block mb-1">Project Title</label>
                   <Input
@@ -976,6 +1015,7 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, title: e.target.value })
                     }
+                    placeholder="e.g. Modern E-Commerce Platform"
                     className="bg-slate-950 border-white/10 text-white text-xs h-10"
                   />
                 </div>
@@ -983,16 +1023,18 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                 <div>
                   <label className="text-xs font-semibold text-slate-300 block mb-1">Description</label>
                   <Textarea
-                    rows={3}
+                    rows={2}
                     value={editingProject.description}
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, description: e.target.value })
                     }
+                    placeholder="Describe the problem, architecture, or outcome..."
                     className="bg-slate-950 border-white/10 text-white text-xs"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                {/* Category & Status */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-slate-300 block mb-1">Category</label>
                     <select
@@ -1012,17 +1054,108 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     </select>
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-slate-300 block mb-1">Status</label>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Status Badge Text</label>
                     <Input
                       value={editingProject.status}
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, status: e.target.value })
+                      }
+                      placeholder="e.g. Live, Beta, In Progress"
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                    />
+                  </div>
+                </div>
+
+                {/* Architecture Sub-tag & Year */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Architecture Sub-Tag</label>
+                    <Input
+                      value={editingProject.architectureTag || ""}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, architectureTag: e.target.value })
+                      }
+                      placeholder="e.g. Full-Stack Architecture"
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Release / Edition Year</label>
+                    <Input
+                      value={editingProject.year || ""}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, year: e.target.value })
+                      }
+                      placeholder="e.g. 2024"
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                    />
+                  </div>
+                </div>
+
+                {/* Tech Stack Pills Input */}
+                <div>
+                  <label className="text-xs font-semibold text-slate-300 block mb-1">
+                    Technologies / Skills (Comma-separated)
+                  </label>
+                  <Input
+                    value={editingProject.tech?.join(", ") || ""}
+                    onChange={(e) =>
+                      setEditingProject({
+                        ...editingProject,
+                        tech: e.target.value
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter(Boolean),
+                      })
+                    }
+                    placeholder="React, TypeScript, Next.js, Tailwind CSS, PostgreSQL"
+                    className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                  />
+                </div>
+
+                {/* Telemetry Stats: Rating, Views, Likes */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Rating (0 - 5.0)</label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      value={editingProject.rating ?? 4.9}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, rating: parseFloat(e.target.value) || 0 })
+                      }
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Views</label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={editingProject.views ?? 0}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, views: parseInt(e.target.value, 10) || 0 })
+                      }
+                      className="bg-slate-950 border-white/10 text-white text-xs h-10"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-300 block mb-1">Likes Count</label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={editingProject.likes ?? 0}
+                      onChange={(e) =>
+                        setEditingProject({ ...editingProject, likes: parseInt(e.target.value, 10) || 0 })
                       }
                       className="bg-slate-950 border-white/10 text-white text-xs h-10"
                     />
                   </div>
                 </div>
 
+                {/* Media & Links */}
                 <div>
                   <label className="text-xs font-semibold text-slate-300 block mb-1">Cover Image URL</label>
                   <Input
@@ -1030,11 +1163,12 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, image: e.target.value })
                     }
+                    placeholder="https://images.unsplash.com/..."
                     className="bg-slate-950 border-white/10 text-white text-xs h-10"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-slate-300 block mb-1">Live Demo URL</label>
                     <Input
@@ -1042,6 +1176,7 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, liveLink: e.target.value })
                       }
+                      placeholder="https://..."
                       className="bg-slate-950 border-white/10 text-white text-xs h-10"
                     />
                   </div>
@@ -1052,6 +1187,7 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                       onChange={(e) =>
                         setEditingProject({ ...editingProject, githubLink: e.target.value })
                       }
+                      placeholder="https://github.com/..."
                       className="bg-slate-950 border-white/10 text-white text-xs h-10"
                     />
                   </div>
@@ -1071,20 +1207,141 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                   </label>
                 </div>
 
+                {/* ========================================================== */}
+                {/* 2. CARD PORTION VISIBILITY & ON/OFF CONTROLS               */}
+                {/* ========================================================== */}
+                <div className="border-t border-white/10 pt-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 text-purple-300">
+                        <Sliders className="w-3.5 h-3.5" />
+                        Card Elements & Visibility Controls
+                      </h4>
+                      <p className="text-[11px] text-slate-400">
+                        Turn off any badge or section here to immediately hide it on the public card
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-1">
+                    {[
+                      {
+                        key: "showChrome" as const,
+                        label: "macOS Window Dots",
+                        desc: "Top 3 colored window strip",
+                        icon: Sliders,
+                      },
+                      {
+                        key: "showCategory" as const,
+                        label: "Category Badge",
+                        desc: "Category tag (e.g. Full-Stack)",
+                        icon: Layers,
+                      },
+                      {
+                        key: "showStatus" as const,
+                        label: "Status Badge",
+                        desc: "Live / Beta pulse pill",
+                        icon: Sparkles,
+                      },
+                      {
+                        key: "showTelemetry" as const,
+                        label: "Telemetry Badge",
+                        desc: "Rating ★ and views 👁 badge",
+                        icon: Eye,
+                      },
+                      {
+                        key: "showSpecs" as const,
+                        label: "Architecture Specs",
+                        desc: "Architecture & Year strip",
+                        icon: Zap,
+                      },
+                      {
+                        key: "showTech" as const,
+                        label: "Tech Stack Pills",
+                        desc: "Interactive technology badges",
+                        icon: Code,
+                      },
+                      {
+                        key: "showLikes" as const,
+                        label: "Like Heart Button",
+                        desc: "Heart button in card title",
+                        icon: Heart,
+                      },
+                      {
+                        key: "showLive" as const,
+                        label: "Live Demo Button",
+                        desc: "Primary gradient action CTA",
+                        icon: Globe,
+                      },
+                      {
+                        key: "showGithub" as const,
+                        label: "GitHub Code Button",
+                        desc: "Source code repository CTA",
+                        icon: Github,
+                      },
+                    ].map((item) => {
+                      const isOn = editingProject[item.key] !== false;
+                      return (
+                        <button
+                          key={item.key}
+                          type="button"
+                          onClick={() =>
+                            setEditingProject({
+                              ...editingProject,
+                              [item.key]: !isOn,
+                            })
+                          }
+                          className={`p-2.5 rounded-xl border text-left transition-all flex items-center justify-between gap-2 select-none ${
+                            isOn
+                              ? "bg-purple-950/30 border-purple-500/40 text-white shadow-sm"
+                              : "bg-slate-950/60 border-white/10 text-slate-400 opacity-60 hover:opacity-80"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <item.icon
+                              className={`w-4 h-4 shrink-0 ${
+                                isOn ? "text-purple-400" : "text-slate-500"
+                              }`}
+                            />
+                            <div className="min-w-0">
+                              <div className="text-xs font-semibold truncate">{item.label}</div>
+                              <div className="text-[10px] text-slate-400 truncate">{item.desc}</div>
+                            </div>
+                          </div>
+
+                          <div
+                            className={`w-9 h-5 rounded-full transition-colors relative flex items-center px-0.5 shrink-0 ${
+                              isOn ? "bg-purple-600" : "bg-slate-700"
+                            }`}
+                          >
+                            <div
+                              className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                                isOn ? "translate-x-4" : "translate-x-0"
+                              }`}
+                            />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Submit buttons */}
                 <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsProjectModalOpen(false)}
-                    className="border-white/10 bg-white/5 hover:bg-white/10 text-white text-xs h-10"
+                    className="border-white/10 bg-white/5 hover:bg-white/10 text-white text-xs h-10 px-4"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs px-5 h-10 shadow-lg shadow-purple-600/30"
+                    className="bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs px-6 h-10 shadow-lg shadow-purple-600/30 gap-2"
                   >
-                    Save Project
+                    <Save className="w-4 h-4" />
+                    Save Changes & Sync
                   </Button>
                 </div>
               </form>

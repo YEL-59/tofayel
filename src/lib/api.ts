@@ -21,6 +21,17 @@ export interface Project {
   views: number;
   likes: number;
   featured?: boolean;
+  architectureTag?: string;
+  year?: string;
+  showChrome?: boolean;
+  showCategory?: boolean;
+  showStatus?: boolean;
+  showTelemetry?: boolean;
+  showSpecs?: boolean;
+  showTech?: boolean;
+  showLikes?: boolean;
+  showLive?: boolean;
+  showGithub?: boolean;
 }
 
 export interface Profile {
@@ -130,6 +141,17 @@ export const fallbackProjects: Project[] = [
     views: 1250,
     likes: 89,
     featured: true,
+    architectureTag: "Full-Stack Architecture",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
   {
     _id: "p2",
@@ -146,6 +168,17 @@ export const fallbackProjects: Project[] = [
     views: 2100,
     likes: 156,
     featured: true,
+    architectureTag: "Next.js Full-Stack",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
   {
     _id: "p3",
@@ -162,6 +195,17 @@ export const fallbackProjects: Project[] = [
     views: 890,
     likes: 67,
     featured: true,
+    architectureTag: "Frontend Reactive System",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
   {
     _id: "p4",
@@ -178,6 +222,17 @@ export const fallbackProjects: Project[] = [
     views: 1800,
     likes: 134,
     featured: false,
+    architectureTag: "Neural NLP Pipeline",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
   {
     _id: "p5",
@@ -194,6 +249,17 @@ export const fallbackProjects: Project[] = [
     views: 950,
     likes: 78,
     featured: false,
+    architectureTag: "Real-time Telemetry & Cache",
+    year: "2023",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
   {
     _id: "p6",
@@ -210,6 +276,17 @@ export const fallbackProjects: Project[] = [
     views: 3200,
     likes: 245,
     featured: false,
+    architectureTag: "Cross-Platform Mobile Engine",
+    year: "2023",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true,
   },
 ];
 

@@ -11,7 +11,18 @@ export const initialProjects = [
     rating: 4.8,
     views: 1250,
     likes: 89,
-    featured: true
+    featured: true,
+    architectureTag: "Full-Stack Architecture",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   },
   {
     title: "Task Management App",
@@ -25,7 +36,18 @@ export const initialProjects = [
     rating: 4.9,
     views: 2100,
     likes: 156,
-    featured: true
+    featured: true,
+    architectureTag: "Next.js Full-Stack",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   },
   {
     title: "Portfolio Website",
@@ -39,7 +61,18 @@ export const initialProjects = [
     rating: 4.7,
     views: 890,
     likes: 67,
-    featured: true
+    featured: true,
+    architectureTag: "Frontend Reactive System",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   },
   {
     title: "AI Chat Application",
@@ -53,7 +86,18 @@ export const initialProjects = [
     rating: 4.6,
     views: 1800,
     likes: 134,
-    featured: false
+    featured: false,
+    architectureTag: "Neural NLP Pipeline",
+    year: "2024",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   },
   {
     title: "Social Media Analytics Dashboard",
@@ -67,7 +111,18 @@ export const initialProjects = [
     rating: 4.5,
     views: 950,
     likes: 78,
-    featured: false
+    featured: false,
+    architectureTag: "Real-time Telemetry & Cache",
+    year: "2023",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   },
   {
     title: "Cross-Platform Mobile App",
@@ -81,7 +136,18 @@ export const initialProjects = [
     rating: 4.4,
     views: 1100,
     likes: 92,
-    featured: false
+    featured: false,
+    architectureTag: "Cross-Platform Mobile Engine",
+    year: "2023",
+    showChrome: true,
+    showCategory: true,
+    showStatus: true,
+    showTelemetry: true,
+    showSpecs: true,
+    showTech: true,
+    showLikes: true,
+    showLive: true,
+    showGithub: true
   }
 ];
 

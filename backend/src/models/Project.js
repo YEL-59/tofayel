@@ -56,6 +56,51 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    architectureTag: {
+      type: String,
+      default: 'Full-Stack Architecture',
+    },
+    year: {
+      type: String,
+      default: '2024',
+    },
+    // Visibility & Portion Controls
+    showChrome: {
+      type: Boolean,
+      default: true,
+    },
+    showCategory: {
+      type: Boolean,
+      default: true,
+    },
+    showStatus: {
+      type: Boolean,
+      default: true,
+    },
+    showTelemetry: {
+      type: Boolean,
+      default: true,
+    },
+    showSpecs: {
+      type: Boolean,
+      default: true,
+    },
+    showTech: {
+      type: Boolean,
+      default: true,
+    },
+    showLikes: {
+      type: Boolean,
+      default: true,
+    },
+    showLive: {
+      type: Boolean,
+      default: true,
+    },
+    showGithub: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
