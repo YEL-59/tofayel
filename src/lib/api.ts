@@ -510,10 +510,68 @@ export const portfolioAPI = {
   },
 
   /**
-   * Direct CV download URL
+   * Direct CV download URL (Always serves a true PDF)
    */
   getCVDownloadUrl(): string {
     return `${API_BASE}/cv/download`;
+  },
+
+  /**
+   * Direct CV preview URL for in-browser PDF viewing
+   */
+  getCVPreviewUrl(): string {
+    return `${API_BASE}/cv/preview`;
+  },
+
+  /**
+   * Record a site visit event
+   */
+  async recordVisit(page: string = window.location.pathname): Promise<void> {
+    try {
+      let sessionId = localStorage.getItem('portfolio_visitor_session_id');
+      if (!sessionId) {
+        sessionId = `sess_${Math.random().toString(36).substring(2, 9)}`;
+        localStorage.setItem('portfolio_visitor_session_id', sessionId);
+      }
+
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isTablet = /iPad|Tablet/i.test(navigator.userAgent);
+      const device = isTablet ? 'Tablet' : isMobile ? 'Mobile' : 'Desktop';
+      
+      let browser = 'Chrome';
+      const ua = navigator.userAgent;
+      if (ua.includes('Firefox')) browser = 'Firefox';
+      else if (ua.includes('Edg')) browser = 'Edge';
+      else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+
+      await fetch(`${API_BASE}/analytics/visit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          page: page || '/',
+          referrer: document.referrer || 'Direct / Bookmark',
+          browser,
+          device,
+        }),
+      });
+    } catch {
+      // Ignore background analytics failures
+    }
+  },
+
+  /**
+   * Get visitor stats for the Admin Dashboard
+   */
+  async getAnalyticsStats(): Promise<AnalyticsStats | null> {
+    try {
+      const res = await fetch(`${API_BASE}/analytics/stats`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      return data.data;
+    } catch {
+      return null;
+    }
   },
 
   /**
@@ -568,3 +626,22 @@ export const portfolioAPI = {
     }
   },
 };
+
+export interface VisitorRecord {
+  sessionId: string;
+  page: string;
+  referrer: string;
+  browser: string;
+  device: string;
+  ip: string;
+  timestamp: string;
+}
+
+export interface AnalyticsStats {
+  totalVisits: number;
+  uniqueVisitors: number;
+  visitsToday: number;
+  pageBreakdown: { page: string; count: number; percentage: number }[];
+  deviceBreakdown: { desktop: number; mobile: number; tablet: number };
+  recentVisits: VisitorRecord[];
+}
