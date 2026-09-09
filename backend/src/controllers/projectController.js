@@ -44,7 +44,12 @@ export const getProjects = async (req, res) => {
       ];
     }
 
-    const projects = await Project.find(query).sort({ createdAt: -1 });
+    const projects = await Project.find(query).sort({ featured: -1, createdAt: -1 });
+    projects.sort((a, b) => {
+      if (a.title === 'Portfolio Website') return -1;
+      if (b.title === 'Portfolio Website') return 1;
+      return 0;
+    });
     res.status(200).json({
       success: true,
       source: 'database',
