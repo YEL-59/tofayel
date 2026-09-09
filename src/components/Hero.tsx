@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart, Download } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart, Download, Zap, Calendar, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import myImage from "../assets/me.jpg";
 import { useState, useMemo, useEffect } from "react";
@@ -17,7 +17,18 @@ export default function Hero({ initialProfile }: HeroProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
+  const [likedProjects, setLikedProjects] = useState<Record<string | number, boolean>>({});
 
+  const toggleLike = (id: string | number) => {
+    setLikedProjects((prev) => {
+      const next = !prev[id];
+      toast({
+        title: next ? "Added to Favorites ❤️" : "Removed from Favorites",
+        description: next ? "Project added to your favorites!" : "Project unliked",
+      });
+      return { ...prev, [id]: next };
+    });
+  };
 
   const [projects, setProjects] = useState<Project[]>(fallbackProjects);
 
@@ -498,94 +509,134 @@ export default function Hero({ initialProfile }: HeroProps) {
                           whileHover={{ y: -5, rotateY: 5 }}
                         >
                           {viewMode === "grid" ? (
-                            <>
-                              {/* Grid View */}
-                              <div className="relative h-48 overflow-hidden">
-                                <img 
-                                  src={project.image} 
-                                  alt={project.title}
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                                
-                                {/* Status Badge */}
-                                <div className="absolute top-4 left-4">
-                                  <span className="px-3 py-1 bg-green-500/90 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                                    {project.status}
+                            <div className="flex flex-col h-full bg-slate-900/90 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-xl group hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 relative">
+                              {/* Top Ambient Glow Line */}
+                              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-purple-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                              {/* macOS Chrome Header Strip */}
+                              <div className="px-4 py-2.5 bg-slate-950/80 border-b border-white/5 flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                                  <span className="w-2 h-2 rounded-full bg-yellow-500/80" />
+                                  <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/15 border border-blue-500/30 text-blue-300 uppercase tracking-wider">
+                                    {project.category}
+                                  </span>
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    {project.status || "Live"}
                                   </span>
                                 </div>
-                                
-                                {/* Stats */}
-                                <div className="absolute bottom-4 right-4 flex items-center gap-3 text-white/80 text-xs">
-                                  <div className="flex items-center gap-1">
-                                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                    {project.rating}
+                              </div>
+
+                              {/* Project Image Viewport */}
+                              <div className="relative h-48 overflow-hidden bg-slate-950">
+                                <img
+                                  src={project.image}
+                                  alt={project.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+
+                                {/* Floating Telemetry Badge */}
+                                <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 text-white/90 text-xs shadow-lg">
+                                  <div className="flex items-center gap-1 text-yellow-400 font-semibold">
+                                    <Star className="h-3 w-3 fill-yellow-400" />
+                                    <span>{project.rating || 4.9}</span>
                                   </div>
-                                  <div className="flex items-center gap-1">
-                                    <Eye className="h-3 w-3" />
-                                    {project.views}
+                                  <span className="text-white/30">•</span>
+                                  <div className="flex items-center gap-1 text-slate-300">
+                                    <Eye className="h-3 w-3 text-slate-400" />
+                                    <span>{project.views || 890}</span>
                                   </div>
                                 </div>
                               </div>
 
-                              <div className="p-4 sm:p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="px-2.5 sm:px-3 py-1 bg-white/10 text-white/90 text-xs font-medium rounded-full">
-                                    {project.category}
-                                  </span>
-                                  <button className="p-1 hover:bg-white/10 rounded-full transition-colors">
-                                    <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white/60 hover:text-red-400" />
-                                  </button>
-                                </div>
+                              {/* Bento Content Body */}
+                              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                                <div>
+                                  {/* Spec Telemetry Strip (Architecture & Year) */}
+                                  <div className="flex items-center justify-between text-[11px] mb-2.5 pb-2 border-b border-white/5">
+                                    <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
+                                      <Zap className="w-3 h-3 text-cyan-400" />
+                                      <span>Full-Stack Architecture</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-purple-300 font-medium">
+                                      <Calendar className="w-3 h-3 text-purple-400" />
+                                      <span>2024 Edition</span>
+                                    </div>
+                                  </div>
 
-                                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
-                                  {project.title}
-                                </h3>
-                                <p className="text-white/70 text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2">
-                                  {project.description}
-                                </p>
-                                
-                                {/* Tech Stack */}
-                                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-                                  {project.tech.slice(0, 3).map((tech) => (
-                                    <span 
-                                      key={tech}
-                                      className="px-2.5 sm:px-3 py-1 bg-white/5 border border-white/10 text-white/80 text-xs rounded-full"
+                                  {/* Title & Heart Button */}
+                                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                                    <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-blue-200 group-hover:to-purple-200 transition-all">
+                                      {project.title}
+                                    </h3>
+                                    <button
+                                      onClick={() => toggleLike(project._id || project.id || index)}
+                                      className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-red-400 transition-colors shrink-0"
+                                      title="Like Project"
                                     >
-                                      {tech}
-                                    </span>
-                                  ))}
-                                  {project.tech.length > 3 && (
-                                    <span className="px-2.5 sm:px-3 py-1 bg-white/5 border border-white/10 text-white/60 text-xs rounded-full">
-                                      +{project.tech.length - 3}
-                                    </span>
-                                  )}
+                                      <Heart
+                                        className={`h-4 w-4 transition-colors ${
+                                          likedProjects[project._id || project.id || index]
+                                            ? "fill-red-500 text-red-500 scale-110"
+                                            : ""
+                                        }`}
+                                      />
+                                    </button>
+                                  </div>
+
+                                  {/* Description */}
+                                  <p className="text-slate-300/80 text-xs leading-relaxed line-clamp-2">
+                                    {project.description}
+                                  </p>
+
+                                  {/* Tech Stack Pills with Micro Colored Dots */}
+                                  <div className="flex flex-wrap gap-1.5 mt-3">
+                                    {project.tech.slice(0, 4).map((tech) => (
+                                      <span
+                                        key={tech}
+                                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-950/80 border border-white/10 text-slate-200 text-[11px] font-medium rounded-lg shadow-sm"
+                                      >
+                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                                        {tech}
+                                      </span>
+                                    ))}
+                                    {project.tech.length > 4 && (
+                                      <span className="px-2 py-1 bg-white/5 border border-white/10 text-slate-400 text-[11px] rounded-lg">
+                                        +{project.tech.length - 4}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex gap-2 sm:gap-3">
+                                {/* Bento Bottom Actions */}
+                                <div className="flex items-center gap-2 pt-3 border-t border-white/10">
                                   <a
                                     href={project.liveLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 group/btn"
+                                    className="flex-1 h-10 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-1.5 group/btn transition-all duration-300 hover:scale-[1.02]"
                                   >
-                                    <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover/btn:rotate-12 transition-transform" />
-                                    <span className="hidden sm:inline">Live Demo</span>
-                                    <span className="sm:hidden">Demo</span>
+                                    <span>Live Demo</span>
+                                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
                                   </a>
                                   <a
                                     href={project.githubLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
+                                    className="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                                    title="View Source Code"
                                   >
-                                    <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                    Code
+                                    <Github className="w-3.5 h-3.5" />
+                                    <span className="hidden sm:inline">Code</span>
                                   </a>
                                 </div>
                               </div>
-                            </>
+                            </div>
                           ) : (
                             <>
                               {/* List View */}
