@@ -441,6 +441,40 @@ export const portfolioAPI = {
   },
 
   /**
+   * Like or unlike a project (atomic counter update in Atlas)
+   */
+  async likeProject(id: string, action: 'like' | 'unlike' = 'like'): Promise<{ success: boolean; data?: Project; message?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/projects/${id}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      });
+      const data = await res.json();
+      return { success: res.ok, data: data.data, message: data.message };
+    } catch (err: any) {
+      return { success: false, message: err.message || 'Offline mode' };
+    }
+  },
+
+  /**
+   * Record a view/visit on a project (atomic counter update in Atlas)
+   */
+  async recordProjectView(id: string): Promise<{ success: boolean; data?: Project }> {
+    try {
+      const res = await fetch(`${API_BASE}/projects/${id}/view`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      return { success: res.ok, data: data.data };
+    } catch (err: any) {
+      return { success: false };
+    }
+  },
+
+
+  /**
    * Upload CV file (multipart/form-data)
    */
   async uploadCV(file: File): Promise<{ success: boolean; message: string; data?: any }> {

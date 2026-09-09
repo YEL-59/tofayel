@@ -26,7 +26,8 @@ import {
   Zap,
   Layers,
   Globe,
-  Code
+  Code,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,8 +181,15 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
       loadProjects();
       loadCVInfo();
       loadMessages();
+
+      const handleLiveUpdates = () => {
+        loadProjects();
+      };
+      window.addEventListener("portfolio_projects_updated", handleLiveUpdates);
+      return () => window.removeEventListener("portfolio_projects_updated", handleLiveUpdates);
     }
   }, [isAuthenticated]);
+
 
   const checkHealth = async () => {
     const health = await portfolioAPI.checkHealth();
@@ -764,10 +772,39 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
           {/* ======================================================== */}
           {activeTab === "projects" && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-white">Active Portfolio Projects</h3>
-                  <p className="text-xs text-slate-400">Total {projects.length} showcase projects saved in Atlas</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-slate-400">Total Projects</span>
+                  <span className="text-lg font-bold text-white mt-0.5">{projects.length}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Eye className="w-3 h-3 text-blue-400" />
+                    Total Views
+                  </span>
+                  <span className="text-lg font-bold text-blue-400 mt-0.5">
+                    {projects.reduce((sum, p) => sum + (p.views || 0), 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Heart className="w-3 h-3 text-red-400" />
+                    Total Likes
+                  </span>
+                  <span className="text-lg font-bold text-red-400 mt-0.5">
+                    {projects.reduce((sum, p) => sum + (p.likes || 0), 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-900/80 border border-white/10 flex flex-col">
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Star className="w-3 h-3 text-yellow-400" />
+                    Avg Rating
+                  </span>
+                  <span className="text-lg font-bold text-yellow-400 mt-0.5">
+                    {projects.length > 0
+                      ? (projects.reduce((sum, p) => sum + (p.rating || 0), 0) / projects.length).toFixed(1)
+                      : "4.8"}
+                  </span>
                 </div>
               </div>
 
@@ -853,10 +890,14 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
                     </div>
 
                     <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/5 text-xs">
-                      <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-                        <span>★ {proj.rating}</span>
+                      <div className="flex items-center gap-2.5 text-slate-400 text-[11px]">
+                        <span className="text-yellow-400 font-medium">★ {proj.rating ?? 4.7}</span>
                         <span>•</span>
-                        <span>{proj.status}</span>
+                        <span className="text-slate-300">👁 {proj.views ?? 890}</span>
+                        <span>•</span>
+                        <span className="text-red-400">❤️ {proj.likes ?? 67}</span>
+                        <span>•</span>
+                        <span className="text-emerald-400 font-medium">{proj.status || "Live"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {proj.githubLink && (

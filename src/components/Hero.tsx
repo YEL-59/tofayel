@@ -17,20 +17,83 @@ export default function Hero({ initialProfile }: HeroProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
-  const [likedProjects, setLikedProjects] = useState<Record<string | number, boolean>>({});
+  const [likedProjects, setLikedProjects] = useState<Record<string, boolean>>(() => {
+    try {
+      const stored = localStorage.getItem("portfolio_liked_projects");
+      return stored ? JSON.parse(stored) : {};
+    } catch (e) {
+      return {};
+    }
+  });
 
-  const toggleLike = (id: string | number) => {
-    setLikedProjects((prev) => {
-      const next = !prev[id];
-      toast({
-        title: next ? "Added to Favorites ❤️" : "Removed from Favorites",
-        description: next ? "Project added to your favorites!" : "Project unliked",
-      });
-      return { ...prev, [id]: next };
-    });
+  const [viewedProjectsSession, setViewedProjectsSession] = useState<Set<string>>(new Set());
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+
+  const handleRecordView = async (project: Project) => {
+    const projId = project._id || String(project.id);
+    if (!projId) return;
+
+    // Optimistically increment views in local state
+    setProjects((prev) =>
+      prev.map((p) => {
+        const currentId = p._id || String(p.id);
+        if (currentId === projId) {
+          return { ...p, views: (p.views ?? 890) + 1 };
+        }
+        return p;
+      })
+    );
+
+    try {
+      await portfolioAPI.recordProjectView(projId);
+      window.dispatchEvent(new CustomEvent("portfolio_projects_updated"));
+    } catch (e) {
+      console.error("Failed to record view", e);
+    }
   };
 
-  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+  const toggleLike = async (project: Project, index?: number) => {
+    const projId = project._id || String(project.id || index || "default");
+    const isLiked = Boolean(likedProjects[projId]);
+    const nextLiked = !isLiked;
+    const delta = nextLiked ? 1 : -1;
+
+    // 1. Update liked state in localStorage and state
+    setLikedProjects((prev) => {
+      const updated = { ...prev, [projId]: nextLiked };
+      try {
+        localStorage.setItem("portfolio_liked_projects", JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    // 2. Optimistically update local project likes count
+    setProjects((prev) =>
+      prev.map((p) => {
+        const currentId = p._id || String(p.id || index);
+        if (currentId === projId) {
+          const currentLikes = p.likes ?? (p.title === "Portfolio Website" ? 67 : 50);
+          return { ...p, likes: Math.max(0, currentLikes + delta) };
+        }
+        return p;
+      })
+    );
+
+    toast({
+      title: nextLiked ? "Added to Favorites ❤️" : "Removed from Favorites",
+      description: nextLiked
+        ? `Thanks! "${project.title}" like count is now ${(project.likes ?? 67) + 1}.`
+        : `Unliked "${project.title}".`,
+    });
+
+    // 3. Persist to MongoDB Atlas
+    try {
+      await portfolioAPI.likeProject(projId, nextLiked ? "like" : "unlike");
+      window.dispatchEvent(new CustomEvent("portfolio_projects_updated"));
+    } catch (e) {
+      console.error("Failed to persist like", e);
+    }
+  };
 
   const loadFreshProjects = () => {
     portfolioAPI.getProjects().then((data) => {
@@ -62,8 +125,15 @@ export default function Hero({ initialProfile }: HeroProps) {
   useEffect(() => {
     if (isModalOpen) {
       loadFreshProjects();
+      // Record view when visitor opens the showcase modal
+      const portfolioProject = projects.find((p) => p.title.toLowerCase().includes("portfolio")) || projects[0];
+      if (portfolioProject && portfolioProject._id && !viewedProjectsSession.has(portfolioProject._id)) {
+        setViewedProjectsSession((prev) => new Set(prev).add(portfolioProject._id!));
+        handleRecordView(portfolioProject);
+      }
     }
   }, [isModalOpen]);
+
 
   const handleDownloadCV = () => {
     toast({
@@ -581,25 +651,34 @@ export default function Hero({ initialProfile }: HeroProps) {
                               )}
 
                               {/* Project Image Viewport */}
-                              <div className="relative h-44 sm:h-48 overflow-hidden rounded-xl bg-transparent">
+                              <div
+                                onClick={() => handleRecordView(project)}
+                                className="relative h-44 sm:h-48 overflow-hidden rounded-xl bg-transparent cursor-pointer group/img"
+                                title="Click to view details"
+                              >
                                 <img
                                   src={project.image}
                                   alt={project.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                  className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                                 {/* Floating Telemetry Badge (Transparent Glass) */}
                                 {project.showTelemetry !== false && (
-                                  <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white/90 text-xs shadow-lg">
-                                    <div className="flex items-center gap-1 text-yellow-400 font-semibold">
+                                  <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 text-white/90 text-xs shadow-lg">
+                                    <div className="flex items-center gap-1 text-yellow-400 font-semibold" title="Rating">
                                       <Star className="h-3 w-3 fill-yellow-400" />
                                       <span>{project.rating ?? 4.7}</span>
                                     </div>
                                     <span className="text-white/30">•</span>
-                                    <div className="flex items-center gap-1 text-slate-300">
+                                    <div className="flex items-center gap-1 text-slate-300" title="Views">
                                       <Eye className="h-3 w-3 text-slate-400" />
                                       <span>{project.views ?? 890}</span>
+                                    </div>
+                                    <span className="text-white/30">•</span>
+                                    <div className="flex items-center gap-1 text-red-400 font-medium" title="Likes">
+                                      <Heart className="h-3 w-3 fill-red-400 text-red-400" />
+                                      <span>{project.likes ?? 67}</span>
                                     </div>
                                   </div>
                                 )}
@@ -635,17 +714,32 @@ export default function Hero({ initialProfile }: HeroProps) {
                                     </h3>
                                     {project.showLikes !== false && (
                                       <button
-                                        onClick={() => toggleLike(project._id || project.id || index)}
-                                        className="p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-red-400 transition-colors shrink-0"
-                                        title="Like Project"
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleLike(project, index);
+                                        }}
+                                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all duration-200 shrink-0 ${
+                                          likedProjects[project._id || String(project.id || index)]
+                                            ? "bg-red-500/20 border-red-500/50 text-red-400 shadow-sm shadow-red-500/30 scale-105"
+                                            : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:text-red-400 hover:border-red-400/30 hover:scale-105"
+                                        }`}
+                                        title={
+                                          likedProjects[project._id || String(project.id || index)]
+                                            ? "Unlike Project"
+                                            : "Like Project"
+                                        }
                                       >
                                         <Heart
-                                          className={`h-4 w-4 transition-colors ${
-                                            likedProjects[project._id || project.id || index]
+                                          className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                                            likedProjects[project._id || String(project.id || index)]
                                               ? "fill-red-500 text-red-500 scale-110"
-                                              : ""
+                                              : "text-white/70"
                                           }`}
                                         />
+                                        <span className="text-xs font-semibold">
+                                          {project.likes ?? 67}
+                                        </span>
                                       </button>
                                     )}
                                   </div>
@@ -679,6 +773,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                                         href={project.liveLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => handleRecordView(project)}
                                         className="flex-1 h-10 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-xs font-semibold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-1.5 group/btn transition-all duration-300 hover:scale-[1.02]"
                                       >
                                         <span>Live Demo</span>
@@ -690,6 +785,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                                         href={project.githubLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => handleRecordView(project)}
                                         className="h-10 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
                                         title="View Source Code"
                                       >
@@ -705,7 +801,10 @@ export default function Hero({ initialProfile }: HeroProps) {
                             <>
                               {/* List View */}
                               <div className="flex gap-3 sm:gap-6">
-                                <div className="relative w-20 h-16 sm:w-32 sm:h-24 rounded-lg overflow-hidden flex-shrink-0">
+                                <div
+                                  onClick={() => handleRecordView(project)}
+                                  className="relative w-20 h-16 sm:w-32 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer"
+                                >
                                   <img 
                                     src={project.image} 
                                     alt={project.title}
@@ -723,14 +822,32 @@ export default function Hero({ initialProfile }: HeroProps) {
                                       {project.title}
                                     </h3>
                                     <div className="flex items-center gap-3 sm:gap-4 text-white/60 text-xs sm:text-sm mt-1 sm:mt-0">
-                                      <div className="flex items-center gap-1">
+                                      <div className="flex items-center gap-1 text-yellow-400">
                                         <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                                        {project.rating}
+                                        <span>{project.rating ?? 4.7}</span>
                                       </div>
-                                      <div className="flex items-center gap-1">
+                                      <div className="flex items-center gap-1 text-slate-300">
                                         <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                                        {project.views}
+                                        <span>{project.views ?? 890}</span>
                                       </div>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleLike(project, index);
+                                        }}
+                                        className={`flex items-center gap-1 transition-colors ${
+                                          likedProjects[project._id || String(project.id || index)] ? "text-red-400" : "hover:text-red-400"
+                                        }`}
+                                        title="Toggle Like"
+                                      >
+                                        <Heart
+                                          className={`h-3 w-3 sm:h-4 sm:w-4 ${
+                                            likedProjects[project._id || String(project.id || index)] ? "fill-red-500 text-red-500" : ""
+                                          }`}
+                                        />
+                                        <span>{project.likes ?? 67}</span>
+                                      </button>
                                     </div>
                                   </div>
                                   
@@ -755,6 +872,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                                         href={project.liveLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => handleRecordView(project)}
                                         className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
                                       >
                                         <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -764,6 +882,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                                         href={project.githubLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={() => handleRecordView(project)}
                                         className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium rounded-lg transition-colors"
                                       >
                                         <Code className="h-3 w-3 sm:h-4 sm:w-4" />

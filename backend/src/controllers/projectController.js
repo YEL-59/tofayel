@@ -176,3 +176,84 @@ export const deleteProject = async (req, res) => {
     });
   }
 };
+
+// @desc    Increment or decrement likes count for a project
+// @route   POST /api/projects/:id/like
+export const likeProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action } = req.body || {};
+    const delta = action === 'unlike' ? -1 : 1;
+
+    if (!isDBConnected()) {
+      const proj = initialProjects.find((p, idx) => p._id === id || String(idx + 1) === id);
+      if (proj) {
+        proj.likes = Math.max(0, (proj.likes || 0) + delta);
+        return res.status(200).json({ success: true, source: 'fallback', data: proj });
+      }
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    const updated = await Project.findByIdAndUpdate(
+      id,
+      { $inc: { likes: delta } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: delta > 0 ? 'Project liked' : 'Project unliked',
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update likes count',
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Increment view count when a visitor clicks/sees/opens a project
+// @route   POST /api/projects/:id/view
+export const recordView = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!isDBConnected()) {
+      const proj = initialProjects.find((p, idx) => p._id === id || String(idx + 1) === id);
+      if (proj) {
+        proj.views = (proj.views || 0) + 1;
+        return res.status(200).json({ success: true, source: 'fallback', data: proj });
+      }
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    const updated = await Project.findByIdAndUpdate(
+      id,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'View recorded',
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to record view',
+      error: error.message,
+    });
+  }
+};
+

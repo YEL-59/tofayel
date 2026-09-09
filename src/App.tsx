@@ -7,9 +7,19 @@ import { ShieldCheck, Rocket } from 'lucide-react';
 import { portfolioAPI, type Profile, fallbackProfile } from '@/lib/api';
 import './App.css';
 
+function checkRoute() {
+  const path = window.location.pathname.replace(/\/$/, "");
+  const hash = window.location.hash;
+  return {
+    isAdmin: path === "/admin" || hash === "#admin",
+    isDeploy: path === "/deploy" || hash === "#deploy",
+  };
+}
+
 function App() {
-  const [isAdminOpen, setIsAdminOpen] = useState(window.location.hash === '#admin');
-  const [isDeployOpen, setIsDeployOpen] = useState(window.location.hash === '#deploy');
+  const initialRoute = checkRoute();
+  const [isAdminOpen, setIsAdminOpen] = useState(initialRoute.isAdmin);
+  const [isDeployOpen, setIsDeployOpen] = useState(initialRoute.isDeploy);
   const [profile, setProfile] = useState<Profile>(fallbackProfile);
 
   useEffect(() => {
@@ -17,32 +27,48 @@ function App() {
       if (data) setProfile(data);
     });
 
-    const handleHashChange = () => {
-      setIsAdminOpen(window.location.hash === '#admin');
-      setIsDeployOpen(window.location.hash === '#deploy');
+    const syncRouteFromLocation = () => {
+      const { isAdmin, isDeploy } = checkRoute();
+      setIsAdminOpen(isAdmin);
+      setIsDeployOpen(isDeploy);
+
+      // Normalize messy URLs (e.g. /admin#admin or #admin -> clean /admin)
+      if (isAdmin && (window.location.hash || window.location.pathname !== "/admin")) {
+        window.history.replaceState(null, "", "/admin");
+      } else if (isDeploy && (window.location.hash || window.location.pathname !== "/deploy")) {
+        window.history.replaceState(null, "", "/deploy");
+      }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    // Run initial normalization
+    syncRouteFromLocation();
+
+    window.addEventListener("popstate", syncRouteFromLocation);
+    window.addEventListener("hashchange", syncRouteFromLocation);
+    return () => {
+      window.removeEventListener("popstate", syncRouteFromLocation);
+      window.removeEventListener("hashchange", syncRouteFromLocation);
+    };
   }, []);
 
   const openAdmin = () => {
-    window.location.hash = '#admin';
+    window.history.pushState(null, "", "/admin");
     setIsAdminOpen(true);
     setIsDeployOpen(false);
   };
 
   const openDeploy = () => {
-    window.location.hash = '#deploy';
+    window.history.pushState(null, "", "/deploy");
     setIsDeployOpen(true);
     setIsAdminOpen(false);
   };
 
   const closeModals = () => {
-    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    window.history.pushState(null, "", "/");
     setIsAdminOpen(false);
     setIsDeployOpen(false);
   };
+
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
@@ -66,7 +92,7 @@ function App() {
         <button
           onClick={openAdmin}
           className="group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-white/10 hover:border-white/30 backdrop-blur-md text-xs text-white/70 hover:text-white transition-all shadow-xl hover:scale-105"
-          title="Open Admin Studio (#admin)"
+          title="Open Admin Studio (/admin)"
         >
           <ShieldCheck className="w-3.5 h-3.5 text-blue-400 group-hover:text-blue-300" />
           <span className="font-medium hidden sm:inline">Admin CMS</span>
@@ -75,7 +101,7 @@ function App() {
         <button
           onClick={openDeploy}
           className="group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-cyan-500/20 hover:border-cyan-400/40 backdrop-blur-md text-xs text-white/70 hover:text-white transition-all shadow-xl hover:scale-105"
-          title="Open Deployment Center (#deploy)"
+          title="Open Deployment Center (/deploy)"
         >
           <Rocket className="w-3.5 h-3.5 text-cyan-400 group-hover:text-cyan-300" />
           <span className="font-medium hidden sm:inline">Deploy Center</span>
