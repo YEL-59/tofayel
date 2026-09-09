@@ -3,7 +3,6 @@ import { Toaster } from '@/components/ui/toaster';
 import Hero from './components/Hero';
 import AdminDashboard from './components/admin/AdminDashboard';
 import DeploymentPage from './components/deploy/DeploymentPage';
-import { ShieldCheck, Rocket } from 'lucide-react';
 import { portfolioAPI, type Profile, fallbackProfile } from '@/lib/api';
 import './App.css';
 
@@ -86,27 +85,6 @@ function App() {
       <main className="relative z-10">
         <Hero initialProfile={profile} />
       </main>
-
-      {/* Discreet Launchers (Bottom Left) */}
-      <div className="fixed bottom-4 left-4 z-40 flex items-center gap-2">
-        <button
-          onClick={openAdmin}
-          className="group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-white/10 hover:border-white/30 backdrop-blur-md text-xs text-white/70 hover:text-white transition-all shadow-xl hover:scale-105"
-          title="Open Admin Studio (/admin)"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-blue-400 group-hover:text-blue-300" />
-          <span className="font-medium hidden sm:inline">Admin CMS</span>
-        </button>
-
-        <button
-          onClick={openDeploy}
-          className="group flex items-center gap-2 px-3 py-2 rounded-full bg-slate-900/80 hover:bg-slate-900 border border-cyan-500/20 hover:border-cyan-400/40 backdrop-blur-md text-xs text-white/70 hover:text-white transition-all shadow-xl hover:scale-105"
-          title="Open Deployment Center (/deploy)"
-        >
-          <Rocket className="w-3.5 h-3.5 text-cyan-400 group-hover:text-cyan-300" />
-          <span className="font-medium hidden sm:inline">Deploy Center</span>
-        </button>
-      </div>
 
       {/* Full Admin Dashboard Overlay */}
       {isAdminOpen && (
