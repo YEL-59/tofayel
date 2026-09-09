@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, KeyRound, ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
+import { Lock, ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +12,7 @@ interface AdminLoginProps {
 
 export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
   const { toast } = useToast();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -25,20 +25,19 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
     setErrorMessage("");
 
     setTimeout(() => {
-      const cleanUser = username.trim().toLowerCase();
+      const cleanEmail = email.trim().toLowerCase();
       const cleanPass = password.trim();
 
-      // Accepted administrative credentials
-      const validUsers = ["admin", "tofayel", "tofayeltuhin143@gmail.com", "root"];
-      const validPasswords = ["admin", "admin123", "tofayel123", "123456", "V2Kpi6vCWZJST51n"];
+      // Secure credentials requested by user:
+      // Mail: tofayeltuhin143@gmail.com | Pass: 12345678
+      const isEmailValid =
+        cleanEmail === "tofayeltuhin143@gmail.com" || cleanEmail === "admin";
+      const isPassValid = cleanPass === "12345678";
 
-      const isUserValid = validUsers.includes(cleanUser) || cleanUser === "";
-      const isPassValid = validPasswords.includes(cleanPass);
-
-      if (isUserValid && isPassValid) {
+      if (isEmailValid && isPassValid) {
         if (rememberMe) {
           localStorage.setItem("portfolio_admin_auth", "true");
-          localStorage.setItem("portfolio_admin_user", cleanUser || "admin");
+          localStorage.setItem("portfolio_admin_user", cleanEmail);
         } else {
           sessionStorage.setItem("portfolio_admin_auth", "true");
         }
@@ -49,21 +48,15 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
         });
         onSuccess();
       } else {
-        setErrorMessage("Invalid credentials. Please check your username and password.");
+        setErrorMessage("Invalid credentials. Please verify your email and password.");
         toast({
           title: "Access Denied",
-          description: "Incorrect username or password",
+          description: "Incorrect email or password",
           variant: "destructive",
         });
       }
       setIsLoading(false);
-    }, 400);
-  };
-
-  const handleFillDemo = () => {
-    setUsername("admin");
-    setPassword("admin123");
-    setErrorMessage("");
+    }, 350);
   };
 
   return (
@@ -89,23 +82,8 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
             Admin Studio Login
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Authenticate to manage projects, CV uploads, and inquiries
+            Secure access portal for Tofayel Portfolio CMS
           </p>
-        </div>
-
-        {/* Quick Demo Hint Pill */}
-        <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <KeyRound className="w-3.5 h-3.5 text-blue-400" />
-            <span>Default: <code className="text-blue-300 font-mono">admin</code> / <code className="text-blue-300 font-mono">admin123</code></span>
-          </div>
-          <button
-            type="button"
-            onClick={handleFillDemo}
-            className="text-[11px] font-semibold text-blue-400 hover:text-blue-300 underline underline-offset-2"
-          >
-            Auto Fill
-          </button>
         </div>
 
         {/* Error message */}
@@ -113,7 +91,7 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs text-center"
+            className="mt-5 p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs text-center"
           >
             {errorMessage}
           </motion.div>
@@ -123,21 +101,22 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
         <form onSubmit={handleLogin} className="mt-6 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Username or Email
+              Admin Email Address
             </label>
             <Input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="admin"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tofayeltuhin143@gmail.com"
               required
+              autoComplete="email"
               className="bg-slate-950/70 border-white/15 text-white h-11 text-sm focus:border-blue-500"
             />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-              Security Password
+              Admin Password
             </label>
             <div className="relative">
               <Input
@@ -146,12 +125,14 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                autoComplete="current-password"
                 className="bg-slate-950/70 border-white/15 text-white h-11 text-sm pr-10 focus:border-blue-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                title={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -166,7 +147,7 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="rounded border-white/20 bg-slate-950 text-blue-600 focus:ring-0 w-3.5 h-3.5"
               />
-              <span>Remember this device</span>
+              <span>Keep me signed in</span>
             </label>
           </div>
 
@@ -177,7 +158,7 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
               className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-600/30 gap-2"
             >
               <ShieldCheck className="w-4 h-4" />
-              {isLoading ? "Authenticating..." : "Unlock Admin Dashboard"}
+              {isLoading ? "Verifying..." : "Sign In to Admin Studio"}
             </Button>
 
             <Button
@@ -194,7 +175,7 @@ export default function AdminLogin({ onSuccess, onCancel }: AdminLoginProps) {
 
         <div className="mt-6 pt-4 border-t border-white/10 text-center text-[11px] text-slate-500 flex items-center justify-center gap-1">
           <Sparkles className="w-3 h-3 text-blue-400" />
-          <span>Tofayel Portfolio CMS • Encrypted Session</span>
+          <span>Tofayel Portfolio CMS • Protected Endpoint</span>
         </div>
       </motion.div>
     </div>
