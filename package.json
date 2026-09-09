@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "install:all": "npm install && npm --prefix backend install",
     "backend": "node backend/src/index.js",
     "backend:dev": "node --watch backend/src/index.js",
     "backend:seed": "node backend/src/utils/seeder.js",
