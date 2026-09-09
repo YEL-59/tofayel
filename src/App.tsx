@@ -45,14 +45,20 @@ function App() {
       }
     };
 
-    // Run initial normalization
+    // Run initial normalization and record visit
     syncRouteFromLocation();
+    portfolioAPI.recordVisit(window.location.pathname);
 
-    window.addEventListener("popstate", syncRouteFromLocation);
-    window.addEventListener("hashchange", syncRouteFromLocation);
+    const handleRouteChange = () => {
+      syncRouteFromLocation();
+      portfolioAPI.recordVisit(window.location.pathname);
+    };
+
+    window.addEventListener("popstate", handleRouteChange);
+    window.addEventListener("hashchange", handleRouteChange);
     return () => {
-      window.removeEventListener("popstate", syncRouteFromLocation);
-      window.removeEventListener("hashchange", syncRouteFromLocation);
+      window.removeEventListener("popstate", handleRouteChange);
+      window.removeEventListener("hashchange", handleRouteChange);
     };
   }, []);
 
