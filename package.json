@@ -5,6 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "backend": "node backend/src/index.js",
+    "backend:dev": "node --watch backend/src/index.js",
+    "backend:seed": "node backend/src/utils/seeder.js",
+    "server": "node backend/src/index.js",
+    "server:dev": "node --watch backend/src/index.js",
+    "server:seed": "node backend/src/utils/seeder.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

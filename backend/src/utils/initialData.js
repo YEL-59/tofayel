@@ -1,0 +1,125 @@
+export const initialProjects = [
+  {
+    title: "E-Commerce Platform",
+    description: "A modern full-stack e-commerce solution with real-time inventory, payment processing, and admin dashboard.",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
+    liveLink: "https://ecommerce-demo.com",
+    githubLink: "https://github.com/yel-59/ecommerce",
+    tech: ["React", "Node.js", "MongoDB", "Stripe", "Tailwind CSS"],
+    category: "Full-Stack",
+    status: "Live",
+    rating: 4.8,
+    views: 1250,
+    likes: 89,
+    featured: true
+  },
+  {
+    title: "Task Management App",
+    description: "Collaborative task management with real-time updates, drag-and-drop interface, and team collaboration features.",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop",
+    liveLink: "https://task-app-demo.com",
+    githubLink: "https://github.com/yel-59/task-app",
+    tech: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Tailwind"],
+    category: "Web App",
+    status: "Live",
+    rating: 4.9,
+    views: 2100,
+    likes: 156,
+    featured: true
+  },
+  {
+    title: "Portfolio Website",
+    description: "Personal portfolio showcasing projects, skills, and professional experience with modern design and animations.",
+    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&h=600&fit=crop",
+    liveLink: "https://tofayel-portfolio.com",
+    githubLink: "https://github.com/yel-59/portfolio",
+    tech: ["React", "Framer Motion", "Tailwind CSS", "TypeScript"],
+    category: "Portfolio",
+    status: "Live",
+    rating: 4.7,
+    views: 890,
+    likes: 67,
+    featured: true
+  },
+  {
+    title: "AI Chat Application",
+    description: "Intelligent chatbot with natural language processing, sentiment analysis, and multi-language support.",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
+    liveLink: "https://ai-chat-demo.com",
+    githubLink: "https://github.com/yel-59/ai-chat",
+    tech: ["React", "Python", "OpenAI", "Socket.io"],
+    category: "AI/ML",
+    status: "Live",
+    rating: 4.6,
+    views: 1800,
+    likes: 134,
+    featured: false
+  },
+  {
+    title: "Social Media Analytics Dashboard",
+    description: "Comprehensive social media analytics dashboard with real-time data visualization and reporting tools.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
+    liveLink: "https://social-dashboard.com",
+    githubLink: "https://github.com/yel-59/social-dashboard",
+    tech: ["React", "D3.js", "Express", "Redis"],
+    category: "Analytics",
+    status: "Live",
+    rating: 4.5,
+    views: 950,
+    likes: 78,
+    featured: false
+  },
+  {
+    title: "Cross-Platform Mobile App",
+    description: "Smooth cross-platform mobile application with interactive gesture navigation and offline state sync.",
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop",
+    liveLink: "https://mobile-app-demo.com",
+    githubLink: "https://github.com/yel-59/mobile-app",
+    tech: ["React Native", "Expo", "Redux Toolkit"],
+    category: "Mobile",
+    status: "Live",
+    rating: 4.4,
+    views: 1100,
+    likes: 92,
+    featured: false
+  }
+];
+
+export const initialSkills = [
+  { name: "React", category: "Frontend", level: 95, icon: "React" },
+  { name: "TypeScript", category: "Frontend", level: 90, icon: "Code" },
+  { name: "Next.js", category: "Frontend", level: 88, icon: "Globe" },
+  { name: "Tailwind CSS", category: "Frontend", level: 95, icon: "Palette" },
+  { name: "Node.js", category: "Backend", level: 85, icon: "Server" },
+  { name: "Express.js", category: "Backend", level: 88, icon: "Zap" },
+  { name: "MongoDB", category: "Backend", level: 82, icon: "Database" },
+  { name: "Git & GitHub", category: "Tools & DevOps", level: 92, icon: "GitBranch" },
+  { name: "Docker", category: "Tools & DevOps", level: 75, icon: "Box" }
+];
+
+export const initialExperiences = [
+  {
+    title: "Senior Frontend Developer",
+    company: "Softvence",
+    location: "Dhaka, Bangladesh",
+    period: "2023 - Present",
+    description: [
+      "Led development of core client applications using React, Next.js, and TypeScript",
+      "Architected modular design systems and performance-tuned SPAs",
+      "Mentored junior engineers and conducted peer code reviews"
+    ],
+    technologies: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Redux Toolkit"]
+  },
+  {
+    title: "Full-Stack Web Developer",
+    company: "Freelance & Tech Studios",
+    location: "Dhaka, Bangladesh",
+    period: "2021 - 2023",
+    description: [
+      "Built custom MERN stack applications for international clients",
+      "Integrated secure authentication, REST APIs, and Stripe payment flows",
+      "Optimized SEO, accessibility, and Core Web Vitals across delivered web apps"
+    ],
+    technologies: ["MongoDB", "Express.js", "React", "Node.js", "REST APIs"]
+  }
+];

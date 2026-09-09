@@ -1,130 +1,55 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, ExternalLink, X, Code, Globe, Search, Grid, List, Star, Eye, Heart, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import myImage from "../assets/me.jpg";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { portfolioAPI, fallbackProjects, fallbackProfile, type Project, type Profile } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
-export default function Hero() {
+interface HeroProps {
+  initialProfile?: Profile;
+}
+
+export default function Hero({ initialProfile }: HeroProps) {
+  const { toast } = useToast();
+  const [profile, setProfile] = useState<Profile>(initialProfile || fallbackProfile);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
 
 
-  const projects = [
-    {
-      id: 1,
-      title: "E-Commerce Platform",
-      description: "A modern full-stack e-commerce solution with real-time inventory, payment processing, and admin dashboard.",
-      image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop",
-      liveLink: "https://ecommerce-demo.com",
-      githubLink: "https://github.com/yourusername/ecommerce",
-      tech: ["React", "Node.js", "MongoDB", "Stripe"],
-      category: "Full-Stack",
-      status: "Live",
-      rating: 4.8,
-      views: 1250,
-      likes: 89
-    },
-    {
-      id: 2,
-      title: "Task Management App",
-      description: "Collaborative task management with real-time updates, drag-and-drop interface, and team collaboration features.",
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
-      liveLink: "https://task-app-demo.com",
-      githubLink: "https://github.com/yourusername/task-app",
-      tech: ["Next.js", "TypeScript", "Prisma", "PostgreSQL"],
-      category: "Web App",
-      status: "Live",
-      rating: 4.9,
-      views: 2100,
-      likes: 156
-    },
-    {
-      id: 3,
-      title: "Portfolio Website",
-      description: "Personal portfolio showcasing projects, skills, and professional experience with modern design and animations.",
-      image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=400&h=300&fit=crop",
-      liveLink: "https://your-portfolio.com",
-      githubLink: "https://github.com/yourusername/portfolio",
-      tech: ["React", "Framer Motion", "Tailwind CSS"],
-      category: "Portfolio",
-      status: "Live",
-      rating: 4.7,
-      views: 890,
-      likes: 67
-    },
-    {
-      id: 4,
-      title: "AI Chat Application",
-      description: "Intelligent chatbot with natural language processing, sentiment analysis, and multi-language support.",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
-      liveLink: "https://ai-chat-demo.com",
-      githubLink: "https://github.com/yourusername/ai-chat",
-      tech: ["React", "Python", "OpenAI", "Socket.io"],
-      category: "AI/ML",
-      status: "Live",
-      rating: 4.6,
-      views: 1800,
-      likes: 134
-    },
-    {
-      id: 5,
-      title: "Social Media Dashboard",
-      description: "Comprehensive social media analytics dashboard with real-time data visualization and reporting tools.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
-      liveLink: "https://social-dashboard.com",
-      githubLink: "https://github.com/yourusername/social-dashboard",
-      tech: ["Vue.js", "D3.js", "Express", "Redis"],
-      category: "Analytics",
-      status: "Live",
-      rating: 4.5,
-      views: 950,
-      likes: 78
-    },
-    {
-      id: 6,
-      title: "Mobile Game",
-      description: "Cross-platform mobile game with physics engine, multiplayer support, and in-app purchases.",
-      image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop",
-      liveLink: "https://mobile-game.com",
-      githubLink: "https://github.com/yourusername/mobile-game",
-      tech: ["Unity", "C#", "Firebase", "PlayFab"],
-      category: "Game Dev",
-      status: "Live",
-      rating: 4.4,
-      views: 3200,
-      likes: 245
-    },
-    {
-      id: 7,
-      title: "Weather App",
-      description: "Beautiful weather application with location-based forecasts, radar maps, and weather alerts.",
-      image: "https://images.unsplash.com/photo-1592210454359-9043f067919b?w=400&h=300&fit=crop",
-      liveLink: "https://weather-app.com",
-      githubLink: "https://github.com/yourusername/weather-app",
-      tech: ["React Native", "Expo", "OpenWeather API"],
-      category: "Mobile",
-      status: "Live",
-      rating: 4.3,
-      views: 1100,
-      likes: 92
-    },
-    {
-      id: 8,
-      title: "Crypto Trading Bot",
-      description: "Automated cryptocurrency trading bot with advanced algorithms and risk management features.",
-      image: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400&h=300&fit=crop",
-      liveLink: "https://crypto-bot.com",
-      githubLink: "https://github.com/yourusername/crypto-bot",
-      tech: ["Python", "Binance API", "Pandas", "NumPy"],
-      category: "Finance",
-      status: "Live",
-      rating: 4.2,
-      views: 2800,
-      likes: 198
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
+
+  useEffect(() => {
+    if (initialProfile) {
+      setProfile(initialProfile);
+    } else {
+      portfolioAPI.getProfile().then((data) => {
+        if (data) setProfile(data);
+      });
     }
-  ];
+
+    portfolioAPI.getProjects().then((data) => {
+      if (data && data.length > 0) {
+        setProjects(data);
+      }
+    });
+  }, [initialProfile]);
+
+  const handleDownloadCV = () => {
+    toast({
+      title: "Downloading CV",
+      description: `Starting download of ${profile.cvFileName || "Resume"}...`,
+    });
+    const link = document.createElement("a");
+    link.href = portfolioAPI.getCVDownloadUrl();
+    link.download = profile.cvFileName || "Tofayel_Islam_Resume.pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const categories = ["All", "Full-Stack", "Web App", "Portfolio", "AI/ML", "Analytics", "Game Dev", "Mobile", "Finance"];
 
@@ -160,11 +85,11 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 0.2 }}
                 >
                   <p className="text-sm sm:text-base lg:text-lg font-light text-white/60 tracking-wide">
-                    Hello, I'm
+                    {profile.greeting || "Hello, I'm"}
                   </p>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-tight">
-                    <span className="block">Tofayel</span>
-                    <span className="block text-white/40">Islam</span>
+                    <span className="block">{profile.nameFirst || "Tofayel"}</span>
+                    <span className="block text-white/40">{profile.nameLast || "Islam"}</span>
                   </h1>
                 </motion.div>
 
@@ -178,12 +103,11 @@ export default function Hero() {
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-white/60 to-transparent"></div>
                     <span className="text-sm sm:text-base lg:text-lg font-medium text-white/80 tracking-wider uppercase">
-                      Frontend Developer
+                      {profile.role || "Frontend Developer"}
                     </span>
                   </div>
                   <p className="text-base sm:text-lg lg:text-xl text-white/70 leading-relaxed max-w-lg">
-                    Crafting exceptional digital experiences with precision and creativity. 
-                    Specializing in modern web technologies and user-centered design.
+                    {profile.bio}
                   </p>
                 </motion.div>
 
@@ -198,7 +122,7 @@ export default function Hero() {
                     Technologies I work with
                   </p>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
-                    {["React", "TypeScript", "Next.js", "Tailwind CSS", "Node.js", "PostgreSQL"].map((tech, index) => (
+                    {(profile.technologies || ["React", "TypeScript", "Next.js"]).map((tech, index) => (
                       <motion.span
                         key={tech}
                         className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/5 border border-white/10 rounded-full text-xs sm:text-sm text-white/80 backdrop-blur-sm"
@@ -237,8 +161,10 @@ export default function Hero() {
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button
                       variant="outline"
-                      className="border-white/20 text-white hover:bg-white/5 px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto"
+                      onClick={handleDownloadCV}
+                      className="bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
                     >
+                      <Download className="w-4 h-4" />
                       Download CV
                     </Button>
                   </motion.div>
@@ -252,9 +178,9 @@ export default function Hero() {
                   transition={{ duration: 0.8, delay: 1.2 }}
                 >
                   {[
-                    { icon: Github, href: "https://github.com", label: "GitHub" },
-                    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-                    { icon: Mail, href: "mailto:tofayel@example.com", label: "Email" },
+                    { icon: Github, href: profile.socialLinks?.github || "https://github.com", label: "GitHub" },
+                    { icon: Linkedin, href: profile.socialLinks?.linkedin || "https://linkedin.com", label: "LinkedIn" },
+                    { icon: Mail, href: `mailto:${profile.socialLinks?.email || "tofayeltuhin143@gmail.com"}`, label: "Email" },
                   ].map((social, index) => (
                     <motion.a
                       key={social.href}
@@ -282,295 +208,156 @@ export default function Hero() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
               >
-                <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg">
-                  {/* Background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur-3xl" />
-                  
-                  {/* Main photo card */}
+                <div className="relative w-full max-w-[340px] sm:max-w-md lg:max-w-lg py-8 sm:py-10 flex items-center justify-center">
+                  {/* Ambient background glow layers */}
+                  <div className="absolute -inset-4 bg-gradient-to-tr from-indigo-600/20 via-purple-600/20 to-pink-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/15 to-purple-500/15 rounded-3xl blur-2xl pointer-events-none" />
+
+                  {/* Main Portrait Card */}
                   <motion.div
-                    className="relative z-10 w-64 h-72 sm:w-72 sm:h-80 lg:w-80 lg:h-96 mx-auto rounded-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm shadow-2xl"
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    transition={{ duration: 0.3 }}
+                    className="relative z-10 w-64 h-80 sm:w-72 sm:h-96 lg:w-80 lg:h-[420px] rounded-3xl overflow-hidden border border-white/20 bg-slate-900/60 backdrop-blur-md shadow-[0_25px_60px_rgba(0,0,0,0.6)] cursor-pointer group"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.4 }}
+                    onClick={() => setIsModalOpen(true)}
                   >
+                    {/* Glowing border gradient on hover */}
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/40 via-purple-500/40 to-pink-500/40 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none -z-10" />
+
                     <img 
                       src={myImage} 
                       alt="Tofayel Islam" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                    
-                    {/* Status indicator */}
-                    <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-green-500/90 backdrop-blur-sm rounded-full">
-                      <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                      <span className="text-xs font-medium text-white">Available</span>
+
+                    {/* Gradient overlays for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-black/20 pointer-events-none" />
+
+                    {/* Status indicator: Available */}
+                    {profile.isAvailable !== false && (
+                      <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-emerald-500/20 border border-emerald-400/40 backdrop-blur-md rounded-full shadow-lg">
+                        <div className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                        </div>
+                        <span className="text-xs font-semibold text-emerald-300 tracking-wide">
+                          {profile.availableText || "Available for Hire"}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Bottom identity tag on portrait - Left aligned to avoid overlap */}
+                    <div className="absolute bottom-4 left-4 p-2.5 rounded-2xl bg-slate-950/85 backdrop-blur-md border border-white/10 flex items-center gap-2.5 shadow-xl">
+                      <div className="w-7 h-7 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center shrink-0">
+                        <Code className="w-3.5 h-3.5 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-white tracking-wide">
+                          {profile.nameFirst || "Tofayel"} {profile.nameLast || "Islam"}
+                        </p>
+                        <p className="text-[11px] text-white/60">{profile.role || "Frontend Developer"}</p>
+                      </div>
                     </div>
                   </motion.div>
 
-                  {/* Enhanced Floating Project Cards - Hidden on mobile, responsive on larger screens */}
+                  {/* Satellite Card 1: Top-Left (E-Commerce Platform) */}
                   <motion.div
-                    className="hidden sm:block absolute -top-4 -left-4 lg:-top-8 lg:-left-8 w-44 h-32 sm:w-48 sm:h-34 lg:w-52 lg:h-36 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden cursor-pointer group"
-                    initial={{ opacity: 0, y: 20, rotate: -5 }}
-                    animate={{ opacity: 1, y: 0, rotate: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      rotate: 2,
-                      boxShadow: "0 25px 50px rgba(59, 130, 246, 0.3)"
+                    className="absolute -top-3 -left-2 sm:-top-5 sm:-left-8 lg:-top-6 lg:-left-12 z-20 w-48 sm:w-56 p-3.5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-blue-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.5)] cursor-pointer group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: [0, -6, 0] }}
+                    transition={{
+                      opacity: { duration: 0.8, delay: 0.5 },
+                      y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                     }}
+                    whileHover={{ scale: 1.05, borderColor: "rgba(59, 130, 246, 0.6)", y: -8 }}
                     onClick={() => setIsModalOpen(true)}
                   >
-                    {/* Animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 animate-pulse" />
-                    
-                    {/* Content overlay */}
-                    <div className="relative h-full p-4 z-10">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <motion.div 
-                            className="w-2 h-2 bg-blue-400 rounded-full"
-                            animate={{ scale: [1, 1.5, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          />
-                          <span className="text-xs font-medium text-white/90">React App</span>
-                        </div>
-                        <motion.div
-                          className="text-xs text-white/60"
-                          animate={{ opacity: [0.6, 1, 0.6] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          ⭐ 4.8
-                        </motion.div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                        <span className="text-[11px] font-semibold text-blue-300 uppercase tracking-wider">React App</span>
                       </div>
-                      
-                      <h4 className="text-sm font-semibold text-white mb-1 group-hover:text-blue-300 transition-colors">
-                        E-Commerce Platform
-                      </h4>
-                      <p className="text-xs text-white/70 mb-3">Modern shopping experience with real-time updates</p>
-                      
-                      <div className="flex gap-1 mb-2">
-                        {["React", "TypeScript", "Tailwind"].map((tech, index) => (
-                          <motion.span 
-                            key={tech} 
-                            className="px-2 py-1 text-xs bg-white/10 rounded text-white/80 border border-white/20"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.8 + index * 0.1 }}
-                            whileHover={{ scale: 1.1, backgroundColor: "rgba(255,255,255,0.2)" }}
-                          >
-                            {tech}
-                          </motion.span>
-                        ))}
-                      </div>
-                      
-                      {/* Live indicator */}
-                      <div className="flex items-center gap-1">
-                        <motion.div 
-                          className="w-1.5 h-1.5 bg-green-400 rounded-full"
-                          animate={{ opacity: [1, 0.3, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        />
-                        <span className="text-xs text-green-400 font-medium">Live</span>
-                      </div>
+                      <span className="text-[11px] font-medium text-amber-400 flex items-center gap-0.5">
+                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> 4.8
+                      </span>
                     </div>
-                    
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <h4 className="text-xs sm:text-sm font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-1">
+                      E-Commerce Platform
+                    </h4>
+                    <p className="text-[11px] text-white/60 mb-2 line-clamp-1">Modern shopping with cart & checkout</p>
+                    <div className="flex items-center gap-1">
+                      <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-[10px] text-blue-300 border border-blue-500/30">React</span>
+                      <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-[10px] text-purple-300 border border-purple-500/30">TypeScript</span>
+                      <span className="ml-auto text-[10px] text-emerald-400 font-medium flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+                      </span>
+                    </div>
                   </motion.div>
 
+                  {/* Satellite Card 2: Bottom-Right (AI & UI/UX Systems) */}
                   <motion.div
-                    className="hidden sm:block absolute -bottom-3 -right-3 lg:-bottom-6 lg:-right-6 w-40 h-28 sm:w-44 sm:h-30 lg:w-48 lg:h-32 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden cursor-pointer group"
-                    initial={{ opacity: 0, y: 20, rotate: 5 }}
-                    animate={{ opacity: 1, y: 0, rotate: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      rotate: -2,
-                      boxShadow: "0 25px 50px rgba(34, 197, 94, 0.3)"
+                    className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-8 lg:-bottom-6 lg:-right-10 z-20 w-48 sm:w-56 p-3.5 rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-pink-500/30 shadow-[0_15px_35px_rgba(0,0,0,0.5)] cursor-pointer group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: [0, 6, 0] }}
+                    transition={{
+                      opacity: { duration: 0.8, delay: 0.7 },
+                      y: { duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
                     }}
+                    whileHover={{ scale: 1.05, borderColor: "rgba(236, 72, 153, 0.6)", y: 4 }}
                     onClick={() => setIsModalOpen(true)}
                   >
-                    {/* Animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-teal-500/20 to-emerald-500/20 animate-pulse" />
-                    
-                    <div className="relative h-full p-4 z-10">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <motion.div 
-                            className="w-2 h-2 bg-green-400 rounded-full"
-                            animate={{ scale: [1, 1.5, 1] }}
-                            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                          />
-                          <span className="text-xs font-medium text-white/90">Next.js</span>
-                        </div>
-                        <motion.div
-                          className="text-xs text-white/60"
-                          animate={{ opacity: [0.6, 1, 0.6] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                        >
-                          👁️ 2.1k
-                        </motion.div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
+                        <span className="text-[11px] font-semibold text-pink-300 uppercase tracking-wider">AI / UI/UX</span>
                       </div>
-                      
-                      <h4 className="text-sm font-semibold text-white mb-1 group-hover:text-green-300 transition-colors">
-                        Portfolio Website
-                      </h4>
-                      <p className="text-xs text-white/70">Personal branding & project showcase</p>
-                      
-                      {/* Live indicator */}
-                      <div className="flex items-center gap-1 mt-2">
-                        <motion.div 
-                          className="w-1.5 h-1.5 bg-green-400 rounded-full"
-                          animate={{ opacity: [1, 0.3, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-                        />
-                        <span className="text-xs text-green-400 font-medium">Live</span>
-                      </div>
+                      <span className="text-[11px] font-medium text-pink-300 flex items-center gap-0.5">
+                        <Heart className="w-3 h-3 fill-pink-400 text-pink-400" /> 156
+                      </span>
                     </div>
-                    
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <h4 className="text-xs sm:text-sm font-semibold text-white group-hover:text-pink-300 transition-colors line-clamp-1">
+                      Design System & AI
+                    </h4>
+                    <p className="text-[11px] text-white/60 mb-2 line-clamp-1">NLP Assistant & UI Tokens</p>
+                    <div className="flex items-center gap-1">
+                      <span className="px-1.5 py-0.5 rounded bg-pink-500/20 text-[10px] text-pink-300 border border-pink-500/30">Next.js</span>
+                      <span className="px-1.5 py-0.5 rounded bg-rose-500/20 text-[10px] text-rose-300 border border-rose-500/30">Tailwind</span>
+                      <span className="ml-auto text-[10px] text-emerald-400 font-medium flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Live
+                      </span>
+                    </div>
                   </motion.div>
 
+                  {/* Satellite Badge 3: Top-Right (React & Next.js Pro) */}
                   <motion.div
-                    className="hidden md:block absolute top-1/2 -right-6 lg:-right-12 w-36 h-24 lg:w-44 lg:h-28 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden cursor-pointer group"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.9 }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      x: -8,
-                      boxShadow: "0 25px 50px rgba(236, 72, 153, 0.3)"
-                    }}
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    {/* Animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-rose-500/20 to-fuchsia-500/20 animate-pulse" />
-                    
-                    <div className="relative h-full p-3 z-10">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center gap-2">
-                          <motion.div 
-                            className="w-2 h-2 bg-pink-400 rounded-full"
-                            animate={{ scale: [1, 1.5, 1] }}
-                            transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                          />
-                          <span className="text-xs font-medium text-white/90">UI/UX</span>
-                        </div>
-                        <motion.div
-                          className="text-xs text-white/60"
-                          animate={{ opacity: [0.6, 1, 0.6] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                        >
-                          ❤️ 156
-                        </motion.div>
-                      </div>
-                      
-                      <h4 className="text-sm font-semibold text-white group-hover:text-pink-300 transition-colors">
-                        Design System
-                      </h4>
-                      <p className="text-xs text-white/70">Component library & design tokens</p>
-                      
-                      {/* Live indicator */}
-                      <div className="flex items-center gap-1 mt-1">
-                        <motion.div 
-                          className="w-1.5 h-1.5 bg-green-400 rounded-full"
-                          animate={{ opacity: [1, 0.3, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity, delay: 0.7 }}
-                        />
-                        <span className="text-xs text-green-400 font-medium">Live</span>
-                      </div>
-                    </div>
-                    
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </motion.div>
-
-                  {/* New floating card - AI Project */}
-                  <motion.div
-                    className="hidden lg:block absolute -top-2 -right-2 lg:-top-4 lg:-right-4 w-32 h-20 lg:w-40 lg:h-24 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-xl overflow-hidden cursor-pointer group"
+                    className="absolute top-6 -right-2 sm:top-10 sm:-right-6 lg:-right-10 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md border border-cyan-500/40 shadow-lg cursor-pointer"
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 1.1 }}
-                    whileHover={{ 
-                      scale: 1.1, 
-                      rotate: 3,
-                      boxShadow: "0 25px 50px rgba(168, 85, 247, 0.3)"
+                    animate={{ opacity: 1, scale: 1, y: [0, -4, 0] }}
+                    transition={{
+                      opacity: { duration: 0.6, delay: 0.9 },
+                      y: { duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }
                     }}
+                    whileHover={{ scale: 1.08 }}
                     onClick={() => setIsModalOpen(true)}
                   >
-                    {/* Animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-violet-500/20 to-indigo-500/20 animate-pulse" />
-                    
-                    <div className="relative h-full p-3 z-10">
-                      <div className="flex items-center gap-2 mb-1">
-                        <motion.div 
-                          className="w-2 h-2 bg-purple-400 rounded-full"
-                          animate={{ scale: [1, 1.5, 1] }}
-                          transition={{ duration: 2, repeat: Infinity, delay: 1.2 }}
-                        />
-                        <span className="text-xs font-medium text-white/90">AI/ML</span>
-                      </div>
-                      
-                      <h4 className="text-sm font-semibold text-white group-hover:text-purple-300 transition-colors">
-                        AI Chat Bot
-                      </h4>
-                      <p className="text-xs text-white/70">NLP & Sentiment Analysis</p>
-                    </div>
-                    
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <Code className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="text-xs font-semibold text-cyan-200">React & Next.js</span>
                   </motion.div>
 
-                  {/* Floating tech badges - Hidden on mobile and small tablets */}
+                  {/* Satellite Badge 4: Bottom-Left (TypeScript & Modern Stack) */}
                   <motion.div
-                    className="hidden lg:block absolute -top-16 lg:-top-20 right-6 lg:right-8 animate-pulse"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 1.1 }}
+                    className="absolute bottom-16 -left-2 sm:bottom-20 sm:-left-6 lg:-left-10 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md border border-indigo-500/40 shadow-lg cursor-pointer"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1, y: [0, 4, 0] }}
+                    transition={{
+                      opacity: { duration: 0.6, delay: 1.1 },
+                      y: { duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.7 }
+                    }}
+                    whileHover={{ scale: 1.08 }}
+                    onClick={() => setIsModalOpen(true)}
                   >
-                    <div className="px-2.5 lg:px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                      <span className="text-xs font-medium text-white">React Expert</span>
-                    </div>
+                    <Globe className="w-3.5 h-3.5 text-indigo-400" />
+                    <span className="text-xs font-semibold text-indigo-200">TypeScript Pro</span>
                   </motion.div>
-
-                  <motion.div
-                    className="hidden lg:block absolute bottom-6 lg:bottom-8 -left-3 lg:-left-4"
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 1.3 }}
-                  >
-                    <div className="px-2.5 lg:px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                      <span className="text-xs font-medium text-white">TypeScript</span>
-                    </div>
-                  </motion.div>
-
-                  {/* Animated connection lines */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 400">
-                    <motion.path
-                      d="M 200 200 Q 100 150 50 100"
-                      stroke="rgba(255,255,255,0.1)"
-                      strokeWidth="1"
-                      fill="none"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 2, delay: 1.5 }}
-                    />
-                    <motion.path
-                      d="M 200 200 Q 300 150 350 100"
-                      stroke="rgba(255,255,255,0.1)"
-                      strokeWidth="1"
-                      fill="none"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 2, delay: 1.7 }}
-                    />
-                  </svg>
-
-                  {/* Interactive hover effect */}
-                  <motion.div
-                    className="absolute inset-0 rounded-2xl border-2 border-transparent hover:border-white/30 transition-colors duration-300"
-                    whileHover={{ scale: 1.02 }}
-                  />
                 </div>
               </motion.div>
             </div>

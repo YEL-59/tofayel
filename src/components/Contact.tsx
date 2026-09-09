@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { portfolioAPI } from "@/lib/api";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -44,17 +45,33 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide your name, email, and a message.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await portfolioAPI.sendContactMessage(formData);
       toast({
-        title: "Message sent successfully!",
-        description: "Thank you for reaching out. I'll get back to you soon.",
+        title: "Message Sent!",
+        description: response.message,
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (err: any) {
+      toast({
+        title: "Submission Error",
+        description: err.message || "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   const contactInfo = [
