@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node api.js && node src/index.js",
+    "dev": "node api.js && nodemon src/index.js",
     "seed": "node src/utils/seeder.js"
   },
   "dependencies": {
@@ -15,7 +15,8 @@
     "express": "^4.21.0",
     "mongoose": "^8.7.0",
     "morgan": "^1.10.0",
-    "multer": "^2.3.0"
+    "multer": "^2.3.0",
+    "pdfkit": "^0.20.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

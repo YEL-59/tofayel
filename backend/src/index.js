@@ -12,6 +12,7 @@ import skillRoutes from './routes/skillRoutes.js';
 import experienceRoutes from './routes/experienceRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import cvRoutes from './routes/cvRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -100,6 +101,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/cv', cvRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/experiences', experienceRoutes);
 
