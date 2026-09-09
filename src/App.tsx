@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import Hero from './components/Hero';
+import Contact from './components/Contact';
 import AdminDashboard from './components/admin/AdminDashboard';
 import DeploymentPage from './components/deploy/DeploymentPage';
 import { portfolioAPI, type Profile, fallbackProfile } from '@/lib/api';
@@ -70,7 +71,7 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden relative selection:bg-purple-500/30 selection:text-white">
       {/* Sophisticated gradient background */}
       <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900" />
       
@@ -82,8 +83,9 @@ function App() {
         <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.1)_25%,rgba(255,255,255,0.1)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.1)_75%)] bg-[length:20px_20px]" />
       </div>
 
-      <main className="relative z-10">
+      <main className="relative z-10 space-y-12">
         <Hero initialProfile={profile} />
+        <Contact profile={profile} />
       </main>
 
       {/* Full Admin Dashboard Overlay */}

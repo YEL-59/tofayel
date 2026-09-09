@@ -184,9 +184,14 @@ export default function AdminDashboard({ onClose, onProfileUpdated, onOpenDeploy
 
       const handleLiveUpdates = () => {
         loadProjects();
+        loadMessages();
       };
       window.addEventListener("portfolio_projects_updated", handleLiveUpdates);
-      return () => window.removeEventListener("portfolio_projects_updated", handleLiveUpdates);
+      window.addEventListener("portfolio_messages_updated", handleLiveUpdates);
+      return () => {
+        window.removeEventListener("portfolio_projects_updated", handleLiveUpdates);
+        window.removeEventListener("portfolio_messages_updated", handleLiveUpdates);
+      };
     }
   }, [isAuthenticated]);
 

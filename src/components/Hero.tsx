@@ -254,7 +254,7 @@ export default function Hero({ initialProfile }: HeroProps) {
 
                 {/* Action buttons */}
                 <motion.div
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3 sm:pt-4"
+                  className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 pt-3 sm:pt-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 1 }}
@@ -262,7 +262,7 @@ export default function Hero({ initialProfile }: HeroProps) {
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button
                       onClick={() => setIsModalOpen(true)}
-                      className="group bg-white text-black hover:bg-white/90 px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+                      className="group bg-white text-black hover:bg-white/90 px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto shadow-lg shadow-white/10"
                     >
                       View My Work
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -272,11 +272,24 @@ export default function Hero({ initialProfile }: HeroProps) {
                   <motion.div whileHover={{ scale: 1.02 }}>
                     <Button
                       variant="outline"
-                      onClick={handleDownloadCV}
-                      className="bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
+                      onClick={() => {
+                        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="bg-transparent border-white/20 text-white hover:bg-white/10 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2 hover:border-purple-400/40"
                     >
-                      <Download className="w-4 h-4" />
-                      Download CV
+                      <Mail className="w-4 h-4 text-purple-400" />
+                      Contact Me
+                    </Button>
+                  </motion.div>
+
+                  <motion.div whileHover={{ scale: 1.02 }}>
+                    <Button
+                      variant="ghost"
+                      onClick={handleDownloadCV}
+                      className="bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white px-5 py-3 sm:py-4 rounded-none font-medium transition-all duration-300 w-full sm:w-auto flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-4 h-4 text-emerald-400" />
+                      CV
                     </Button>
                   </motion.div>
                 </motion.div>
@@ -289,16 +302,24 @@ export default function Hero({ initialProfile }: HeroProps) {
                   transition={{ duration: 0.8, delay: 1.2 }}
                 >
                   {[
-                    { icon: Github, href: profile.socialLinks?.github || "https://github.com", label: "GitHub" },
+                    { icon: Github, href: profile.socialLinks?.github || "https://github.com/yel-59", label: "GitHub" },
                     { icon: Linkedin, href: profile.socialLinks?.linkedin || "https://linkedin.com", label: "LinkedIn" },
-                    { icon: Mail, href: `mailto:${profile.socialLinks?.email || "tofayeltuhin143@gmail.com"}`, label: "Email" },
+                    { icon: Mail, href: "#contact", label: "Message Me", isScroll: true },
                   ].map((social, index) => (
                     <motion.a
-                      key={social.href}
+                      key={social.label}
                       href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors duration-300"
+                      target={social.isScroll ? undefined : "_blank"}
+                      rel={social.isScroll ? undefined : "noopener noreferrer"}
+                      onClick={
+                        social.isScroll
+                          ? (e) => {
+                              e.preventDefault();
+                              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                            }
+                          : undefined
+                      }
+                      className="group flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors duration-300 cursor-pointer"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 1.4 + index * 0.1 }}
